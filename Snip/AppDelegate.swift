@@ -16,6 +16,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             systemSymbolName: "camera.metering.spot",
             accessibilityDescription: nil
         )
+
+        statusItem.menu = NSMenu()
+        statusItem.menu?.addItem(withTitle: "Snip", action: nil, keyEquivalent: "")
+        statusItem.menu?.addItem(.separator())
+        statusItem.menu?.addItem(withTitle: "Preferences…", action: nil, keyEquivalent: ",")
+        statusItem.menu?.addItem(.separator())
+        statusItem.menu?.addItem(withTitle: "Quit Snip", action: #selector(NSApp.terminate(_:)), keyEquivalent: "q")
     }
 
     func applicationWillTerminate(_: Notification) {
