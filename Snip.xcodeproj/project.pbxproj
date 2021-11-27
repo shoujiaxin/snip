@@ -35,6 +35,7 @@
 		295AE68927526FD600A0185C /* Snip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Snip.entitlements; sourceTree = "<group>"; };
 		295AE68E27526FD600A0185C /* SnipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		295AE69227526FD600A0185C /* SnipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipTests.swift; sourceTree = "<group>"; };
+		295AE6AB275271E200A0185C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +77,7 @@
 		295AE67C27526FD500A0185C /* Snip */ = {
 			isa = PBXGroup;
 			children = (
+				295AE6AB275271E200A0185C /* Info.plist */,
 				295AE67D27526FD500A0185C /* AppDelegate.swift */,
 				295AE67F27526FD500A0185C /* ViewController.swift */,
 				295AE68427526FD600A0185C /* Assets.xcassets */,
@@ -357,6 +359,7 @@
 				DEVELOPMENT_TEAM = 8TA5C5ASM9;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Snip/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
@@ -385,6 +388,7 @@
 				DEVELOPMENT_TEAM = 8TA5C5ASM9;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Snip/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;

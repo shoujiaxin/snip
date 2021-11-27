@@ -9,8 +9,13 @@ import Cocoa
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
+    private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+
     func applicationDidFinishLaunching(_: Notification) {
-        // Insert code here to initialize your application
+        statusItem.button?.image = NSImage(
+            systemSymbolName: "camera.metering.spot",
+            accessibilityDescription: nil
+        )
     }
 
     func applicationWillTerminate(_: Notification) {
