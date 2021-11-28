@@ -18,7 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         )
 
         statusItem.menu = NSMenu()
-        statusItem.menu?.addItem(withTitle: "Snip", action: nil, keyEquivalent: "")
+        statusItem.menu?.addItem(withTitle: "Snip", action: #selector(snip), keyEquivalent: "")
         statusItem.menu?.addItem(.separator())
         statusItem.menu?.addItem(withTitle: "Preferences…", action: nil, keyEquivalent: ",")
         statusItem.menu?.addItem(.separator())
@@ -31,6 +31,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationSupportsSecureRestorableState(_: NSApplication) -> Bool {
         return true
+    }
+
+    // MARK: - Menu item actions
+
+    @objc private func snip() {
+        SnipManager.shared.start()
     }
 
     // MARK: - Core Data stack

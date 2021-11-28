@@ -13,6 +13,9 @@
 		295AE68527526FD600A0185C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 295AE68427526FD600A0185C /* Assets.xcassets */; };
 		295AE68827526FD600A0185C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 295AE68627526FD600A0185C /* Main.storyboard */; };
 		295AE69327526FD600A0185C /* SnipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE69227526FD600A0185C /* SnipTests.swift */; };
+		295AE6AD2753758100A0185C /* SnipManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6AC2753758100A0185C /* SnipManager.swift */; };
+		295AE6B52753C41800A0185C /* SnipWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6B42753C41800A0185C /* SnipWindowController.swift */; };
+		2998FBB32753D1E8007CBAC0 /* SnipMaskWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB22753D1E8007CBAC0 /* SnipMaskWindow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +39,9 @@
 		295AE68E27526FD600A0185C /* SnipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		295AE69227526FD600A0185C /* SnipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipTests.swift; sourceTree = "<group>"; };
 		295AE6AB275271E200A0185C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		295AE6AC2753758100A0185C /* SnipManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipManager.swift; sourceTree = "<group>"; };
+		295AE6B42753C41800A0185C /* SnipWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindowController.swift; sourceTree = "<group>"; };
+		2998FBB22753D1E8007CBAC0 /* SnipMaskWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMaskWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +90,9 @@
 				295AE68627526FD600A0185C /* Main.storyboard */,
 				295AE68927526FD600A0185C /* Snip.entitlements */,
 				295AE68127526FD500A0185C /* Snip.xcdatamodeld */,
+				295AE6AC2753758100A0185C /* SnipManager.swift */,
+				295AE6B42753C41800A0185C /* SnipWindowController.swift */,
+				2998FBB22753D1E8007CBAC0 /* SnipMaskWindow.swift */,
 			);
 			path = Snip;
 			sourceTree = "<group>";
@@ -197,6 +206,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */,
+				295AE6AD2753758100A0185C /* SnipManager.swift in Sources */,
+				295AE6B52753C41800A0185C /* SnipWindowController.swift in Sources */,
+				2998FBB32753D1E8007CBAC0 /* SnipMaskWindow.swift in Sources */,
 				295AE68027526FD500A0185C /* ViewController.swift in Sources */,
 				295AE67E27526FD500A0185C /* AppDelegate.swift in Sources */,
 			);
