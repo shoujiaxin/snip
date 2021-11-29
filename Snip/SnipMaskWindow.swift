@@ -14,16 +14,28 @@ class SnipMaskWindow: NSWindow {
     /// End position of dragging
     private var endPoint: NSPoint = .zero
 
+    private var snipRect: NSRect {
+        let minX = min(startPoint.x, endPoint.x)
+        let minY = min(startPoint.y, endPoint.y)
+        let width = abs(endPoint.x - startPoint.x)
+        let height = abs(endPoint.y - startPoint.y)
+        return NSMakeRect(minX, minY, width, height)
+    }
+
     private let maskLayer = CAShapeLayer()
+
+    private let snipBox = SnipBox(frame: .zero)
 
     init(screen: NSScreen) {
         super.init(contentRect: screen.frame, styleMask: .borderless, backing: .buffered, defer: false)
 
+        maskLayer.fillColor = CGColor(gray: 0.5, alpha: 0.5)
+        maskLayer.fillRule = .evenOdd
+
+        contentView?.addSubview(snipBox)
         contentView?.wantsLayer = true
         contentView?.layer?.addSublayer(maskLayer)
         level = .statusBar
-        maskLayer.fillColor = CGColor(gray: 0.5, alpha: 0.5)
-        maskLayer.fillRule = .evenOdd
 
         CGDisplayCreateImage(CGMainDisplayID()).map { image in
             let screenshot = NSImage(cgImage: image, size: self.frame.size)
@@ -33,19 +45,28 @@ class SnipMaskWindow: NSWindow {
     }
 
     override func mouseDown(with event: NSEvent) {
+        super.mouseDown(with: event)
+
         startPoint = event.locationInWindow
     }
 
     override func mouseDragged(with event: NSEvent) {
+        super.mouseDragged(with: event)
+
         endPoint = event.locationInWindow
         updateMask()
     }
 
     private func updateMask() {
         let path = CGMutablePath()
-        path.addRect(CGRect(origin: .zero, size: frame.size))
-        path.addRect(CGRect(origin: startPoint, size: CGSize(width: endPoint.x - startPoint.x, height: endPoint.y - startPoint.y)))
+        path.addRect(frame)
+        path.addRect(snipRect)
 
         maskLayer.path = path
+        snipBox.frame = snipRect.insetBy(dx: -6, dy: -6)
+
+        updateTrackingArea()
     }
+
+    private func updateTrackingArea() {}
 }
