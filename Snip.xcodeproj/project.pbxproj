@@ -14,7 +14,6 @@
 		295AE69327526FD600A0185C /* SnipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE69227526FD600A0185C /* SnipTests.swift */; };
 		295AE6AD2753758100A0185C /* SnipManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6AC2753758100A0185C /* SnipManager.swift */; };
 		295AE6B52753C41800A0185C /* SnipWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6B42753C41800A0185C /* SnipWindowController.swift */; };
-		2998FBB32753D1E8007CBAC0 /* SnipMaskWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB22753D1E8007CBAC0 /* SnipMaskWindow.swift */; };
 		2998FBB52755171E007CBAC0 /* SnipBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB42755171E007CBAC0 /* SnipBox.swift */; };
 /* End PBXBuildFile section */
 
@@ -40,7 +39,6 @@
 		295AE6AB275271E200A0185C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		295AE6AC2753758100A0185C /* SnipManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipManager.swift; sourceTree = "<group>"; };
 		295AE6B42753C41800A0185C /* SnipWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindowController.swift; sourceTree = "<group>"; };
-		2998FBB22753D1E8007CBAC0 /* SnipMaskWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMaskWindow.swift; sourceTree = "<group>"; };
 		2998FBB42755171E007CBAC0 /* SnipBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipBox.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,7 +89,6 @@
 				295AE68127526FD500A0185C /* Snip.xcdatamodeld */,
 				295AE6AC2753758100A0185C /* SnipManager.swift */,
 				295AE6B42753C41800A0185C /* SnipWindowController.swift */,
-				2998FBB22753D1E8007CBAC0 /* SnipMaskWindow.swift */,
 				2998FBB42755171E007CBAC0 /* SnipBox.swift */,
 			);
 			path = Snip;
@@ -208,7 +205,6 @@
 				295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */,
 				295AE6AD2753758100A0185C /* SnipManager.swift in Sources */,
 				295AE6B52753C41800A0185C /* SnipWindowController.swift in Sources */,
-				2998FBB32753D1E8007CBAC0 /* SnipMaskWindow.swift in Sources */,
 				295AE67E27526FD500A0185C /* AppDelegate.swift in Sources */,
 				2998FBB52755171E007CBAC0 /* SnipBox.swift in Sources */,
 			);
