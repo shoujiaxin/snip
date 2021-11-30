@@ -15,7 +15,7 @@ class SnipWindowController: NSWindowController {
         // TODO: Screenshot
         screenshot = NSImage(cgImage: CGDisplayCreateImage(CGMainDisplayID())!, size: frame.size)
 
-        super.init(window: NSWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false))
+        super.init(window: SnipWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false))
 
         window?.backgroundColor = NSColor(patternImage: screenshot)
         window?.level = .statusBar
@@ -23,6 +23,7 @@ class SnipWindowController: NSWindowController {
         contentViewController = SnipMaskViewController(frame: frame)
 
         showWindow(self)
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     @available(*, unavailable)

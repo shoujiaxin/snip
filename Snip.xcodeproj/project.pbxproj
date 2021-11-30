@@ -17,6 +17,7 @@
 		2998FBB52755171E007CBAC0 /* SnipBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB42755171E007CBAC0 /* SnipBox.swift */; };
 		2998FBB727566A83007CBAC0 /* SnipMaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB627566A83007CBAC0 /* SnipMaskViewController.swift */; };
 		2998FBBD2756766E007CBAC0 /* SnipSizeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */; };
+		2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBE275688CE007CBAC0 /* SnipWindow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		2998FBB42755171E007CBAC0 /* SnipBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipBox.swift; sourceTree = "<group>"; };
 		2998FBB627566A83007CBAC0 /* SnipMaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMaskViewController.swift; sourceTree = "<group>"; };
 		2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipSizeLabel.swift; sourceTree = "<group>"; };
+		2998FBBE275688CE007CBAC0 /* SnipWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +94,7 @@
 				295AE68927526FD600A0185C /* Snip.entitlements */,
 				295AE68127526FD500A0185C /* Snip.xcdatamodeld */,
 				295AE6AC2753758100A0185C /* SnipManager.swift */,
+				2998FBBE275688CE007CBAC0 /* SnipWindow.swift */,
 				295AE6B42753C41800A0185C /* SnipWindowController.swift */,
 				2998FBB827566AB1007CBAC0 /* ViewControllers */,
 				2998FBB927566AC0007CBAC0 /* Views */,
@@ -229,6 +232,7 @@
 				295AE6AD2753758100A0185C /* SnipManager.swift in Sources */,
 				295AE6B52753C41800A0185C /* SnipWindowController.swift in Sources */,
 				295AE67E27526FD500A0185C /* AppDelegate.swift in Sources */,
+				2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */,
 				2998FBB52755171E007CBAC0 /* SnipBox.swift in Sources */,
 				2998FBBD2756766E007CBAC0 /* SnipSizeLabel.swift in Sources */,
 			);
