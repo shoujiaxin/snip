@@ -6,6 +6,7 @@
 //
 
 import Cocoa
+import SwiftUI
 
 class SnipMaskViewController: NSViewController {
     private enum MouseState {
@@ -26,6 +27,8 @@ class SnipMaskViewController: NSViewController {
     private let maskLayer = CAShapeLayer()
 
     private let snipBox = SnipBox(frame: .zero)
+
+    private let snipSizeLabel = NSHostingView(rootView: SnipSizeLabel(of: .zero))
 
     // MARK: - States
 
@@ -64,6 +67,8 @@ class SnipMaskViewController: NSViewController {
         view.layer?.addSublayer(maskLayer)
 
         view.addSubview(snipBox)
+        view.addSubview(snipSizeLabel)
+
         view.addTrackingArea(NSTrackingArea(rect: frame, options: [.activeAlways, .mouseMoved], owner: self, userInfo: nil))
     }
 
@@ -186,5 +191,11 @@ class SnipMaskViewController: NSViewController {
 
         let inset = -snipBox.borderFrameWidth / 2
         snipBox.frame = rect.insetBy(dx: inset, dy: inset)
+
+        snipSizeLabel.rootView = SnipSizeLabel(of: rect)
+        let labelOrigin = NSPoint(x: rect.minX, y: snipBox.frame.maxY)
+        let labelSize = snipSizeLabel.intrinsicContentSize
+        // TODO: Layout the label on screen
+        snipSizeLabel.frame = NSRect(origin: labelOrigin, size: labelSize)
     }
 }
