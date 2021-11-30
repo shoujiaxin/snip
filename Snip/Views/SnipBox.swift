@@ -61,6 +61,31 @@ class SnipBox: NSView {
         2 * (dragPointRadius + NSBezierPath.defaultLineWidth)
     }
 
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+
+        let inset = borderFrameWidth / 2
+        let rect = dirtyRect.insetBy(dx: inset, dy: inset)
+
+        let border = NSBezierPath(rect: rect)
+        border.lineWidth = borderWidth
+        NSColor.controlAccentColor.setStroke()
+        border.stroke()
+
+        if rect.width > 50, rect.height > 50 {
+            let points = NSBezierPath()
+            for point in DragPoint.allCases {
+                points.appendOval(in: point.rect(in: rect, radius: dragPointRadius))
+            }
+            NSColor.controlAccentColor.setFill()
+            points.fill()
+            NSColor.white.setStroke()
+            points.stroke()
+        }
+    }
+}
+
+extension SnipBox {
     var contentFrame: NSRect {
         frame.insetBy(dx: borderFrameWidth, dy: borderFrameWidth)
     }
@@ -95,27 +120,5 @@ class SnipBox: NSView {
 
     var topBorderFrame: NSRect {
         NSRect(x: frame.minX, y: frame.maxY - borderFrameWidth, width: frame.width, height: borderFrameWidth)
-    }
-
-    override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-
-        let rect = dirtyRect.insetBy(dx: borderFrameWidth / 2, dy: borderFrameWidth / 2)
-
-        let border = NSBezierPath(rect: rect)
-        border.lineWidth = borderWidth
-        NSColor.controlAccentColor.setStroke()
-        border.stroke()
-
-        if rect.width > 50, rect.height > 50 {
-            let points = NSBezierPath()
-            for point in DragPoint.allCases {
-                points.appendOval(in: point.rect(in: rect, radius: dragPointRadius))
-            }
-            NSColor.white.setFill()
-            points.fill()
-            NSColor.controlAccentColor.setStroke()
-            points.stroke()
-        }
     }
 }

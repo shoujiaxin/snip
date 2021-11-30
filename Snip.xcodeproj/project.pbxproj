@@ -15,6 +15,7 @@
 		295AE6AD2753758100A0185C /* SnipManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6AC2753758100A0185C /* SnipManager.swift */; };
 		295AE6B52753C41800A0185C /* SnipWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6B42753C41800A0185C /* SnipWindowController.swift */; };
 		2998FBB52755171E007CBAC0 /* SnipBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB42755171E007CBAC0 /* SnipBox.swift */; };
+		2998FBB727566A83007CBAC0 /* SnipMaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB627566A83007CBAC0 /* SnipMaskViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		295AE6AC2753758100A0185C /* SnipManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipManager.swift; sourceTree = "<group>"; };
 		295AE6B42753C41800A0185C /* SnipWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindowController.swift; sourceTree = "<group>"; };
 		2998FBB42755171E007CBAC0 /* SnipBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipBox.swift; sourceTree = "<group>"; };
+		2998FBB627566A83007CBAC0 /* SnipMaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMaskViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +91,8 @@
 				295AE68127526FD500A0185C /* Snip.xcdatamodeld */,
 				295AE6AC2753758100A0185C /* SnipManager.swift */,
 				295AE6B42753C41800A0185C /* SnipWindowController.swift */,
-				2998FBB42755171E007CBAC0 /* SnipBox.swift */,
+				2998FBB827566AB1007CBAC0 /* ViewControllers */,
+				2998FBB927566AC0007CBAC0 /* Views */,
 			);
 			path = Snip;
 			sourceTree = "<group>";
@@ -100,6 +103,22 @@
 				295AE69227526FD600A0185C /* SnipTests.swift */,
 			);
 			path = SnipTests;
+			sourceTree = "<group>";
+		};
+		2998FBB827566AB1007CBAC0 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				2998FBB627566A83007CBAC0 /* SnipMaskViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		2998FBB927566AC0007CBAC0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2998FBB42755171E007CBAC0 /* SnipBox.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -202,6 +221,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2998FBB727566A83007CBAC0 /* SnipMaskViewController.swift in Sources */,
 				295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */,
 				295AE6AD2753758100A0185C /* SnipManager.swift in Sources */,
 				295AE6B52753C41800A0185C /* SnipWindowController.swift in Sources */,

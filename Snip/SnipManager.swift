@@ -13,6 +13,6 @@ class SnipManager {
     private var windowControllers: [NSWindowController] = []
 
     func start() {
-        windowControllers.append(SnipWindowController(screen: .main!))
+        windowControllers = NSScreen.screens.map { SnipWindowController(screen: $0) }
     }
 }
