@@ -171,9 +171,8 @@ class SnipMaskViewController: NSViewController {
         snipMask.frame = rect.insetBy(dx: inset, dy: inset)
 
         snipSizeLabel.rootView = SnipSizeLabel(of: rect)
-        let labelOrigin = NSPoint(x: rect.minX, y: snipMask.frame.maxY)
         let labelSize = snipSizeLabel.intrinsicContentSize
-        // TODO: Layout the label on screen
+        let labelOrigin = NSPoint(x: min(rect.minX, frame.maxX - labelSize.width), y: min(snipMask.frame.maxY, frame.maxY - labelSize.height))
         snipSizeLabel.frame = NSRect(origin: labelOrigin, size: labelSize)
     }
 }
