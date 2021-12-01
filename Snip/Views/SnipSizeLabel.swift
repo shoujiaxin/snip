@@ -16,7 +16,7 @@ struct SnipSizeLabel: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            Text("\(Int(rect.width)) x \(Int(rect.height))")
+            Text("\(Int(rect.width)) ✕ \(Int(rect.height))")
                 .padding(textPadding)
 
             Divider()

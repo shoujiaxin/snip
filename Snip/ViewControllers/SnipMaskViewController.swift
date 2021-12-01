@@ -13,13 +13,13 @@ class SnipMaskViewController: NSViewController {
         case normal
         case drag
         case resizeBottomLeft
-        case resizeBottom
         case resizeBottomRight
+        case resizeTopLeft
+        case resizeTopRight
+        case resizeBottom
         case resizeLeft
         case resizeRight
-        case resizeTopLeft
         case resizeTop
-        case resizeTopRight
     }
 
     // MARK: - Views
@@ -42,7 +42,7 @@ class SnipMaskViewController: NSViewController {
 
     private var snipRect: NSRect = .zero
 
-    // MARK: - Initializers
+    // MARK: - Lifecycle
 
     init(frame: NSRect) {
         self.frame = frame
@@ -96,45 +96,23 @@ class SnipMaskViewController: NSViewController {
         case .normal:
             snipRect = NSRect(x: snipBeginLocation.x, y: snipBeginLocation.y, width: currentLocation.x - snipBeginLocation.x, height: currentLocation.y - snipBeginLocation.y)
         case .drag:
-            snipRect = snipRect.offsetBy(dx: deltaX, dy: deltaY)
-            if snipRect.origin.x < 0 {
-                snipRect.origin.x = 0
-            }
-            if snipRect.origin.y < 0 {
-                snipRect.origin.y = 0
-            }
-            if snipRect.maxX > frame.width {
-                snipRect.origin.x = frame.width - snipRect.width
-            }
-            if snipRect.maxY > frame.height {
-                snipRect.origin.y = frame.height - snipRect.height
-            }
+            snipRect.offsetBy(dx: deltaX, dy: deltaY, in: frame)
         case .resizeBottomLeft:
-            snipRect.origin.x += deltaX
-            snipRect.origin.y += deltaY
-            snipRect.size.width -= deltaX
-            snipRect.size.height -= deltaY
-        case .resizeBottom:
-            snipRect.origin.y += deltaY
-            snipRect.size.height -= deltaY
+            snipRect.moveCorner(.bottomLeft, dx: deltaX, dy: deltaY)
         case .resizeBottomRight:
-            snipRect.origin.y += deltaY
-            snipRect.size.width += deltaX
-            snipRect.size.height -= deltaY
-        case .resizeLeft:
-            snipRect.origin.x += deltaX
-            snipRect.size.width -= deltaX
-        case .resizeRight:
-            snipRect.size.width += deltaX
+            snipRect.moveCorner(.bottomRight, dx: deltaX, dy: deltaY)
         case .resizeTopLeft:
-            snipRect.origin.x += deltaX
-            snipRect.size.width -= deltaX
-            snipRect.size.height += deltaY
-        case .resizeTop:
-            snipRect.size.height += deltaY
+            snipRect.moveCorner(.topLeft, dx: deltaX, dy: deltaY)
         case .resizeTopRight:
-            snipRect.size.width += deltaX
-            snipRect.size.height += deltaY
+            snipRect.moveCorner(.topRight, dx: deltaX, dy: deltaY)
+        case .resizeBottom:
+            snipRect.moveEdge(.bottom, delta: deltaY)
+        case .resizeLeft:
+            snipRect.moveEdge(.left, delta: deltaX)
+        case .resizeRight:
+            snipRect.moveEdge(.right, delta: deltaX)
+        case .resizeTop:
+            snipRect.moveEdge(.top, delta: deltaY)
         }
 
         snipEndLocation = currentLocation
