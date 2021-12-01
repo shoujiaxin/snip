@@ -14,7 +14,7 @@
 		295AE69327526FD600A0185C /* SnipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE69227526FD600A0185C /* SnipTests.swift */; };
 		295AE6AD2753758100A0185C /* SnipManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6AC2753758100A0185C /* SnipManager.swift */; };
 		295AE6B52753C41800A0185C /* SnipWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6B42753C41800A0185C /* SnipWindowController.swift */; };
-		2998FBB52755171E007CBAC0 /* SnipBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB42755171E007CBAC0 /* SnipBox.swift */; };
+		2998FBB52755171E007CBAC0 /* SnipMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB42755171E007CBAC0 /* SnipMask.swift */; };
 		2998FBB727566A83007CBAC0 /* SnipMaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB627566A83007CBAC0 /* SnipMaskViewController.swift */; };
 		2998FBBD2756766E007CBAC0 /* SnipSizeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */; };
 		2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBE275688CE007CBAC0 /* SnipWindow.swift */; };
@@ -42,7 +42,7 @@
 		295AE6AB275271E200A0185C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		295AE6AC2753758100A0185C /* SnipManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipManager.swift; sourceTree = "<group>"; };
 		295AE6B42753C41800A0185C /* SnipWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindowController.swift; sourceTree = "<group>"; };
-		2998FBB42755171E007CBAC0 /* SnipBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipBox.swift; sourceTree = "<group>"; };
+		2998FBB42755171E007CBAC0 /* SnipMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMask.swift; sourceTree = "<group>"; };
 		2998FBB627566A83007CBAC0 /* SnipMaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMaskViewController.swift; sourceTree = "<group>"; };
 		2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipSizeLabel.swift; sourceTree = "<group>"; };
 		2998FBBE275688CE007CBAC0 /* SnipWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindow.swift; sourceTree = "<group>"; };
@@ -121,7 +121,7 @@
 		2998FBB927566AC0007CBAC0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				2998FBB42755171E007CBAC0 /* SnipBox.swift */,
+				2998FBB42755171E007CBAC0 /* SnipMask.swift */,
 				2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */,
 			);
 			path = Views;
@@ -233,7 +233,7 @@
 				295AE6B52753C41800A0185C /* SnipWindowController.swift in Sources */,
 				295AE67E27526FD500A0185C /* AppDelegate.swift in Sources */,
 				2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */,
-				2998FBB52755171E007CBAC0 /* SnipBox.swift in Sources */,
+				2998FBB52755171E007CBAC0 /* SnipMask.swift in Sources */,
 				2998FBBD2756766E007CBAC0 /* SnipSizeLabel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

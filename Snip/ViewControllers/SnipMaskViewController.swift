@@ -26,7 +26,7 @@ class SnipMaskViewController: NSViewController {
 
     private let maskLayer = CAShapeLayer()
 
-    private let snipBox = SnipBox(frame: .zero)
+    private let snipMask = SnipMask(frame: .zero)
 
     private let snipSizeLabel = NSHostingView(rootView: SnipSizeLabel(of: .zero))
 
@@ -66,7 +66,7 @@ class SnipMaskViewController: NSViewController {
         view.wantsLayer = true
         view.layer?.addSublayer(maskLayer)
 
-        view.addSubview(snipBox)
+        view.addSubview(snipMask)
         view.addSubview(snipSizeLabel)
 
         view.addTrackingArea(NSTrackingArea(rect: frame, options: [.activeAlways, .mouseMoved], owner: self, userInfo: nil))
@@ -146,31 +146,31 @@ class SnipMaskViewController: NSViewController {
         super.mouseMoved(with: event)
 
         let point = event.locationInWindow
-        if snipBox.contentFrame.contains(point) {
+        if snipMask.contentFrame.contains(point) {
             mouseState = .drag
             NSCursor.openHand.set()
-        } else if snipBox.bottomLeftCornerFrame.contains(point) {
+        } else if snipMask.bottomLeftCornerFrame.contains(point) {
             mouseState = .resizeBottomLeft
             NSCursor.crosshair.set() // TODO: Cursor
-        } else if snipBox.bottomRightCornerFrame.contains(point) {
+        } else if snipMask.bottomRightCornerFrame.contains(point) {
             mouseState = .resizeBottomRight
             NSCursor.crosshair.set() // TODO: Cursor
-        } else if snipBox.topLeftCornerFrame.contains(point) {
+        } else if snipMask.topLeftCornerFrame.contains(point) {
             mouseState = .resizeTopLeft
             NSCursor.crosshair.set() // TODO: Cursor
-        } else if snipBox.topRightCornerFrame.contains(point) {
+        } else if snipMask.topRightCornerFrame.contains(point) {
             mouseState = .resizeTopRight
             NSCursor.crosshair.set() // TODO: Cursor
-        } else if snipBox.bottomBorderFrame.contains(point) {
+        } else if snipMask.bottomBorderFrame.contains(point) {
             mouseState = .resizeBottom
             NSCursor.resizeDown.set()
-        } else if snipBox.leftBorderFrame.contains(point) {
+        } else if snipMask.leftBorderFrame.contains(point) {
             mouseState = .resizeLeft
             NSCursor.resizeLeft.set()
-        } else if snipBox.rightBorderFrame.contains(point) {
+        } else if snipMask.rightBorderFrame.contains(point) {
             mouseState = .resizeRight
             NSCursor.resizeRight.set()
-        } else if snipBox.topBorderFrame.contains(point) {
+        } else if snipMask.topBorderFrame.contains(point) {
             mouseState = .resizeTop
             NSCursor.resizeUp.set()
         } else {
@@ -189,11 +189,11 @@ class SnipMaskViewController: NSViewController {
         path.addRect(rect)
         maskLayer.path = path
 
-        let inset = -snipBox.borderFrameWidth / 2
-        snipBox.frame = rect.insetBy(dx: inset, dy: inset)
+        let inset = -snipMask.borderFrameWidth / 2
+        snipMask.frame = rect.insetBy(dx: inset, dy: inset)
 
         snipSizeLabel.rootView = SnipSizeLabel(of: rect)
-        let labelOrigin = NSPoint(x: rect.minX, y: snipBox.frame.maxY)
+        let labelOrigin = NSPoint(x: rect.minX, y: snipMask.frame.maxY)
         let labelSize = snipSizeLabel.intrinsicContentSize
         // TODO: Layout the label on screen
         snipSizeLabel.frame = NSRect(origin: labelOrigin, size: labelSize)

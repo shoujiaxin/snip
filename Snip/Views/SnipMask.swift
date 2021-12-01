@@ -1,5 +1,5 @@
 //
-//  SnipBox.swift
+//  SnipMask.swift
 //  Snip
 //
 //  Created by Jiaxin Shou on 2021/11/29.
@@ -7,7 +7,7 @@
 
 import Cocoa
 
-class SnipBox: NSView {
+class SnipMask: NSView {
     private enum DragPoint: CaseIterable {
         case bottomLeft
         case bottomMid
@@ -85,7 +85,7 @@ class SnipBox: NSView {
     }
 }
 
-extension SnipBox {
+extension SnipMask {
     var contentFrame: NSRect {
         frame.insetBy(dx: borderFrameWidth, dy: borderFrameWidth)
     }
