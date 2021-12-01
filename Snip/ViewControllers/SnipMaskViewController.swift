@@ -56,7 +56,7 @@ class SnipMaskViewController: NSViewController {
     }
 
     override func loadView() {
-        // Do NOT call `super.loadView()` here, since there is no xib file
+        // Do NOT call `super.loadView()` here, since there is no XIB file
 
         view = NSView(frame: frame)
 

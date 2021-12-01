@@ -10,9 +10,14 @@ import Cocoa
 class SnipManager {
     static let shared = SnipManager()
 
-    private var windowControllers: [NSWindowController] = []
+    private var windowController: SnipWindowController?
 
     func start() {
-        windowControllers = NSScreen.screens.map { SnipWindowController(screen: $0) }
+        windowController = NSScreen.screens
+            .first { $0.frame.contains(NSEvent.mouseLocation) }
+            .map { SnipWindowController(screen: $0) }
+        windowController?.showWindow(self)
+
+        NSApp.activate(ignoringOtherApps: true)
     }
 }
