@@ -12,6 +12,10 @@ class SnipWindow: NSWindow {
         true
     }
 
+    override var canBecomeMain: Bool {
+        true
+    }
+
     override func cancelOperation(_: Any?) {
         close()
     }

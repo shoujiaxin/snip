@@ -18,6 +18,7 @@ class SnipWindowController: NSWindowController {
 
         window?.backgroundColor = NSColor(patternImage: screenshot)
         window?.level = .statusBar
+        window?.makeMain()
 
         contentViewController = SnipMaskViewController(frame: frame)
     }
