@@ -26,6 +26,8 @@ struct SnipSizeLabel: View {
                 .padding(textPadding)
         }
         .font(.callout.monospaced())
+        .foregroundColor(.white)
+        .padding(.horizontal, 2)
         .background {
             Color.black
                 .cornerRadius(4)
