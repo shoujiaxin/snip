@@ -15,4 +15,6 @@ class SnipWindow: NSWindow {
     override func cancelOperation(_: Any?) {
         close()
     }
+
+    // TODO: Disable menu bar in full screen mode
 }

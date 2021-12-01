@@ -12,8 +12,7 @@ class SnipWindowController: NSWindowController {
 
     init(screen: NSScreen) {
         let frame = NSRect(origin: .zero, size: screen.frame.size)
-        // TODO: Screenshot
-        screenshot = NSImage(cgImage: CGDisplayCreateImage(CGMainDisplayID())!, size: frame.size)
+        screenshot = NSImage(cgImage: CGDisplayCreateImage(screen.displayID)!, size: frame.size)
 
         super.init(window: SnipWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false, screen: screen))
 

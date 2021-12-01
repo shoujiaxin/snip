@@ -13,9 +13,7 @@ class SnipManager {
     private var windowController: SnipWindowController?
 
     func start() {
-        windowController = NSScreen.screens
-            .first { $0.frame.contains(NSEvent.mouseLocation) }
-            .map { SnipWindowController(screen: $0) }
+        windowController = NSScreen.current.map { SnipWindowController(screen: $0) }
         windowController?.showWindow(self)
 
         NSApp.activate(ignoringOtherApps: true)

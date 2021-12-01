@@ -18,6 +18,7 @@
 		2998FBB727566A83007CBAC0 /* SnipMaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB627566A83007CBAC0 /* SnipMaskViewController.swift */; };
 		2998FBBD2756766E007CBAC0 /* SnipSizeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */; };
 		2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBE275688CE007CBAC0 /* SnipWindow.swift */; };
+		6BE58E1F2757775F0073CBAE /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE58E1E2757775F0073CBAE /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		2998FBB627566A83007CBAC0 /* SnipMaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMaskViewController.swift; sourceTree = "<group>"; };
 		2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipSizeLabel.swift; sourceTree = "<group>"; };
 		2998FBBE275688CE007CBAC0 /* SnipWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindow.swift; sourceTree = "<group>"; };
+		6BE58E1E2757775F0073CBAE /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 				295AE6B42753C41800A0185C /* SnipWindowController.swift */,
 				2998FBB827566AB1007CBAC0 /* ViewControllers */,
 				2998FBB927566AC0007CBAC0 /* Views */,
+				6BE58E1E2757775F0073CBAE /* Extensions.swift */,
 			);
 			path = Snip;
 			sourceTree = "<group>";
@@ -228,6 +231,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2998FBB727566A83007CBAC0 /* SnipMaskViewController.swift in Sources */,
+				6BE58E1F2757775F0073CBAE /* Extensions.swift in Sources */,
 				295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */,
 				295AE6AD2753758100A0185C /* SnipManager.swift in Sources */,
 				295AE6B52753C41800A0185C /* SnipWindowController.swift in Sources */,
