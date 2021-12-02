@@ -48,7 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Menu item actions
 
     @objc private func snip() {
-        SnipManager.shared.start()
+        SnipManager.shared.startCapture()
     }
 
     // MARK: - Core Data stack

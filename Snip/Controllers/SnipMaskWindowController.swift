@@ -1,14 +1,14 @@
 //
-//  SnipMaskViewController.swift
+//  SnipMaskWindowController.swift
 //  Snip
 //
-//  Created by Jiaxin Shou on 2021/11/30.
+//  Created by Jiaxin Shou on 2021/11/28.
 //
 
 import Cocoa
 import SwiftUI
 
-class SnipMaskViewController: NSViewController {
+class SnipMaskWindowController: NSWindowController {
     private enum MouseState {
         case normal
         case drag
@@ -30,11 +30,13 @@ class SnipMaskViewController: NSViewController {
 
     private let snipSizeLabel = NSHostingView(rootView: SnipSizeLabel(of: .zero))
 
-    let snipToolbar = NSHostingView(rootView: SnipToolbar())
+    private let snipToolbar = NSHostingView(rootView: SnipToolbar())
 
     // MARK: - States
 
     private let frame: NSRect
+
+    private let screenshot: NSImage
 
     private var mouseState: MouseState = .normal
 
@@ -46,36 +48,36 @@ class SnipMaskViewController: NSViewController {
 
     // MARK: - Lifecycle
 
-    init(frame: NSRect) {
-        self.frame = frame
+    init(screen: NSScreen) {
+        frame = NSRect(origin: .zero, size: screen.frame.size)
+        screenshot = NSImage(cgImage: CGDisplayCreateImage(screen.displayID)!, size: frame.size)
 
-        super.init(nibName: nil, bundle: nil)
+        super.init(window: SnipWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false, screen: screen))
+
+        window?.backgroundColor = NSColor(patternImage: screenshot)
+        window?.level = .statusBar
+        window?.makeMain()
+
+        maskLayer.fillColor = CGColor(gray: 0.5, alpha: 0.5)
+        maskLayer.fillRule = .evenOdd
+        maskLayer.path = CGPath(rect: frame, transform: nil)
+        window?.contentView?.wantsLayer = true
+        window?.contentView?.layer?.addSublayer(maskLayer)
+
+        snipSizeLabel.isHidden = snipRect.isEmpty
+        snipToolbar.isHidden = snipRect.isEmpty
+        snipToolbar.rootView.delegate = self
+
+        window?.contentView?.addSubview(snipMask)
+        window?.contentView?.addSubview(snipSizeLabel)
+        window?.contentView?.addSubview(snipToolbar)
+
+        window?.contentView?.addTrackingArea(NSTrackingArea(rect: frame, options: [.activeAlways, .mouseMoved], owner: self, userInfo: nil))
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func loadView() {
-        // Do NOT call `super.loadView()` here, since there is no XIB file
-
-        view = NSView(frame: frame)
-
-        maskLayer.fillColor = CGColor(gray: 0.5, alpha: 0.5)
-        maskLayer.fillRule = .evenOdd
-        maskLayer.path = CGPath(rect: frame, transform: nil)
-        view.wantsLayer = true
-        view.layer?.addSublayer(maskLayer)
-
-        snipSizeLabel.isHidden = snipRect.isEmpty
-        snipToolbar.isHidden = snipRect.isEmpty
-
-        view.addSubview(snipMask)
-        view.addSubview(snipSizeLabel)
-        view.addSubview(snipToolbar)
-
-        view.addTrackingArea(NSTrackingArea(rect: frame, options: [.activeAlways, .mouseMoved], owner: self, userInfo: nil))
     }
 
     // MARK: - Mouse events
@@ -198,5 +200,15 @@ class SnipMaskViewController: NSViewController {
         let origin = NSPoint(x: max(rect.maxX - size.width, frame.minX), y: max(snipMask.frame.minY - size.height, frame.minY))
         snipToolbar.frame = NSRect(origin: origin, size: size)
         snipToolbar.isHidden = rect.isEmpty
+    }
+}
+
+extension SnipMaskWindowController: SnipToolbarDelegate {
+    func onCancel() {
+        SnipManager.shared.cancelCapture()
+    }
+
+    func onPin() {
+        print("pin")
     }
 }

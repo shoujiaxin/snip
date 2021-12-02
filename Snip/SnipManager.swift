@@ -10,27 +10,22 @@ import Cocoa
 class SnipManager {
     static let shared = SnipManager()
 
-    private var windowControllers: [NSScreen: SnipWindowController] = [:]
+    private var maskWindowController: SnipMaskWindowController?
 
-    func start() {
-        guard let screen = NSScreen.current, !windowControllers.keys.contains(screen) else {
+    func startCapture() {
+        guard maskWindowController == nil else {
             return
         }
 
-        let controller = SnipWindowController(screen: screen)
-        controller.showWindow(self)
-        windowControllers[screen] = controller
+        maskWindowController = NSScreen.current.map { SnipMaskWindowController(screen: $0) }
+        maskWindowController?.showWindow(self)
 
         // TODO: Not deactivate other apps
         NSApp.activate(ignoringOtherApps: true)
     }
 
-    func cancel() {
-        guard let screen = NSScreen.current, let controller = windowControllers[screen] else {
-            return
-        }
-
-        controller.close()
-        windowControllers.removeValue(forKey: screen)
+    func cancelCapture() {
+        maskWindowController?.close()
+        maskWindowController = nil
     }
 }
