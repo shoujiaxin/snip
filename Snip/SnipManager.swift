@@ -10,11 +10,18 @@ import Cocoa
 class SnipManager {
     static let shared = SnipManager()
 
-    private var windowController: SnipWindowController?
+    private var windowControllers: [NSScreen: SnipWindowController] = [:]
 
     func start() {
-        windowController = NSScreen.current.map { SnipWindowController(screen: $0) }
-        windowController?.showWindow(self)
+        guard let screen = NSScreen.current else {
+            return
+        }
+
+        if !windowControllers.keys.contains(screen) {
+            let controller = SnipWindowController(screen: screen)
+            controller.showWindow(self)
+            windowControllers[screen] = controller
+        }
 
         NSApp.activate(ignoringOtherApps: true)
     }
