@@ -17,7 +17,9 @@ class SnipManager {
             return
         }
 
-        if !windowControllers.keys.contains(screen) {
+        if let controller = windowControllers[screen] {
+            controller.showWindow(self)
+        } else {
             let controller = SnipWindowController(screen: screen)
             controller.showWindow(self)
             windowControllers[screen] = controller
