@@ -90,3 +90,13 @@ extension NSRect {
         self = newRect
     }
 }
+
+extension NSImage {
+    func cropped(to rect: NSRect) -> NSImage {
+        let result = NSImage(size: rect.size)
+        result.lockFocus()
+        draw(in: NSRect(origin: .zero, size: rect.size), from: rect, operation: .sourceOver, fraction: 1.0)
+        result.unlockFocus()
+        return result
+    }
+}

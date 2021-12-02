@@ -40,10 +40,6 @@ class SnipMaskWindowController: NSWindowController {
 
     private var mouseState: MouseState = .normal
 
-    private var snipBeginLocation: NSPoint = .zero
-
-    private var snipEndLocation: NSPoint = .zero
-
     private var snipRect: NSRect = .zero
 
     // MARK: - Lifecycle
@@ -52,7 +48,7 @@ class SnipMaskWindowController: NSWindowController {
         frame = NSRect(origin: .zero, size: screen.frame.size)
         screenshot = NSImage(cgImage: CGDisplayCreateImage(screen.displayID)!, size: frame.size)
 
-        super.init(window: SnipWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false, screen: screen))
+        super.init(window: SnipMaskWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false, screen: screen))
 
         window?.backgroundColor = NSColor(patternImage: screenshot)
         window?.level = .statusBar
@@ -86,20 +82,19 @@ class SnipMaskWindowController: NSWindowController {
         super.mouseDown(with: event)
 
         // Drag begin
-        let currentLocation = event.locationInWindow
-        snipBeginLocation = currentLocation
-        snipEndLocation = currentLocation
+        if mouseState == .normal {
+            snipRect.origin = NSPoint(x: event.locationInWindow.x, y: event.locationInWindow.y)
+        }
     }
 
     override func mouseDragged(with event: NSEvent) {
         super.mouseDragged(with: event)
 
-        let currentLocation = event.locationInWindow
-        let deltaX = currentLocation.x - snipEndLocation.x
-        let deltaY = currentLocation.y - snipEndLocation.y
+        let deltaX = event.deltaX
+        let deltaY = -event.deltaY
         switch mouseState {
         case .normal:
-            snipRect = NSRect(x: snipBeginLocation.x, y: snipBeginLocation.y, width: currentLocation.x - snipBeginLocation.x, height: currentLocation.y - snipBeginLocation.y)
+            snipRect.size = CGSize(width: event.locationInWindow.x - snipRect.origin.x, height: event.locationInWindow.y - snipRect.origin.y)
         case .drag:
             snipRect.offsetBy(dx: deltaX, dy: deltaY, in: frame)
         case .resizeBottomLeft:
@@ -120,10 +115,10 @@ class SnipMaskWindowController: NSWindowController {
             snipRect.moveEdge(.top, delta: deltaY)
         }
 
-        snipEndLocation = currentLocation
-
-        // For multi displays
+        // Standardize coordinate for multi displays
         let rect = snipRect.intersection(frame)
+
+        // Update UI
         updateMask(rect: rect)
         updateSizeLabel(rect: rect)
         snipToolbar.isHidden = true
@@ -162,7 +157,7 @@ class SnipMaskWindowController: NSWindowController {
             NSCursor.resizeUp.set()
         } else {
             mouseState = .normal
-            NSCursor.arrow.set()
+            NSCursor.crosshair.set()
         }
     }
 
@@ -205,10 +200,10 @@ class SnipMaskWindowController: NSWindowController {
 
 extension SnipMaskWindowController: SnipToolbarDelegate {
     func onCancel() {
-        SnipManager.shared.cancelCapture()
+        SnipManager.shared.finishCapture()
     }
 
     func onPin() {
-        print("pin")
+        SnipManager.shared.pinScreenshot(screenshot.cropped(to: snipRect), at: snipRect.origin)
     }
 }

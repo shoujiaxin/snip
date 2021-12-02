@@ -1,5 +1,5 @@
 //
-//  SnipWindow.swift
+//  SnipMaskWindow.swift
 //  Snip
 //
 //  Created by Jiaxin Shou on 2021/12/1.
@@ -7,7 +7,7 @@
 
 import Cocoa
 
-class SnipWindow: NSWindow {
+class SnipMaskWindow: NSWindow {
     override var canBecomeKey: Bool {
         true
     }
@@ -17,7 +17,7 @@ class SnipWindow: NSWindow {
     }
 
     override func cancelOperation(_: Any?) {
-        SnipManager.shared.cancelCapture()
+        SnipManager.shared.finishCapture()
     }
 
     // TODO: Disable menu bar in full screen mode

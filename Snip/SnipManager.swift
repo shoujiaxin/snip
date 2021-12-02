@@ -12,6 +12,8 @@ class SnipManager {
 
     private var maskWindowController: SnipMaskWindowController?
 
+    private var imageWindowController: Set<NSWindowController> = []
+
     func startCapture() {
         guard maskWindowController == nil else {
             return
@@ -24,8 +26,29 @@ class SnipManager {
         NSApp.activate(ignoringOtherApps: true)
     }
 
-    func cancelCapture() {
+    func finishCapture() {
         maskWindowController?.close()
         maskWindowController = nil
+    }
+
+    func pinScreenshot(_ image: NSImage, at origin: NSPoint) {
+        let controller = SnipImageWindowController(image: image, origin: origin, screen: .current)
+        controller.showWindow(self)
+
+        imageWindowController.insert(controller)
+
+        finishCapture()
+
+        // TODO: Not deactivate other apps
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func removeScreenshot(_ sender: Any?) {
+        guard let sender = sender as? NSWindow, let controller = sender.windowController else {
+            return
+        }
+
+        controller.close()
+        imageWindowController.remove(controller)
     }
 }
