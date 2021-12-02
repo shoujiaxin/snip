@@ -20,6 +20,7 @@
 		2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBE275688CE007CBAC0 /* SnipWindow.swift */; };
 		6BE58E1F2757775F0073CBAE /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE58E1E2757775F0073CBAE /* Extensions.swift */; };
 		6BE58E2227585F3E0073CBAE /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 6BE58E2127585F3E0073CBAE /* KeyboardShortcuts */; };
+		6BE58E24275876E70073CBAE /* SnipToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE58E23275876E70073CBAE /* SnipToolBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipSizeLabel.swift; sourceTree = "<group>"; };
 		2998FBBE275688CE007CBAC0 /* SnipWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindow.swift; sourceTree = "<group>"; };
 		6BE58E1E2757775F0073CBAE /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		6BE58E23275876E70073CBAE /* SnipToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipToolBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 			children = (
 				2998FBB42755171E007CBAC0 /* SnipMask.swift */,
 				2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */,
+				6BE58E23275876E70073CBAE /* SnipToolBar.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -239,6 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2998FBB727566A83007CBAC0 /* SnipMaskViewController.swift in Sources */,
+				6BE58E24275876E70073CBAE /* SnipToolBar.swift in Sources */,
 				6BE58E1F2757775F0073CBAE /* Extensions.swift in Sources */,
 				295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */,
 				295AE6AD2753758100A0185C /* SnipManager.swift in Sources */,

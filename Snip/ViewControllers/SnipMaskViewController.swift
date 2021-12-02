@@ -30,6 +30,8 @@ class SnipMaskViewController: NSViewController {
 
     private let snipSizeLabel = NSHostingView(rootView: SnipSizeLabel(of: .zero))
 
+    private let snipToolBar = NSHostingView(rootView: SnipToolBar())
+
     // MARK: - States
 
     private let frame: NSRect
@@ -66,8 +68,13 @@ class SnipMaskViewController: NSViewController {
         view.wantsLayer = true
         view.layer?.addSublayer(maskLayer)
 
+        snipSizeLabel.isHidden = snipRect.isEmpty
+        snipToolBar.isHidden = snipRect.isEmpty
+        snipToolBar.rootView.delegate = self
+
         view.addSubview(snipMask)
         view.addSubview(snipSizeLabel)
+        view.addSubview(snipToolBar)
 
         view.addTrackingArea(NSTrackingArea(rect: frame, options: [.activeAlways, .mouseMoved], owner: self, userInfo: nil))
     }
@@ -118,6 +125,7 @@ class SnipMaskViewController: NSViewController {
         snipEndLocation = currentLocation
 
         updateMask()
+        snipToolBar.isHidden = true
     }
 
     override func mouseMoved(with event: NSEvent) {
@@ -157,6 +165,17 @@ class SnipMaskViewController: NSViewController {
         }
     }
 
+    override func mouseUp(with event: NSEvent) {
+        super.mouseUp(with: event)
+
+        let rect = snipRect.intersection(frame)
+
+        let toolBarSize = snipToolBar.intrinsicContentSize
+        let toolBarOrigin = NSPoint(x: max(rect.maxX - toolBarSize.width, frame.minX), y: max(snipMask.frame.minY - toolBarSize.height, frame.minY))
+        snipToolBar.frame = NSRect(origin: toolBarOrigin, size: toolBarSize)
+        snipToolBar.isHidden = rect.isEmpty
+    }
+
     // MARK: - Private methods
 
     private func updateMask() {
@@ -174,5 +193,16 @@ class SnipMaskViewController: NSViewController {
         let labelSize = snipSizeLabel.intrinsicContentSize
         let labelOrigin = NSPoint(x: min(rect.minX, frame.maxX - labelSize.width), y: min(snipMask.frame.maxY, frame.maxY - labelSize.height))
         snipSizeLabel.frame = NSRect(origin: labelOrigin, size: labelSize)
+        snipSizeLabel.isHidden = rect.isEmpty
+    }
+}
+
+extension SnipMaskViewController: SnipToolBarDelegate {
+    func onCancel() {
+        view.window?.close()
+    }
+
+    func onPin() {
+        print("pin")
     }
 }
