@@ -20,11 +20,24 @@ class SnipWindowController: NSWindowController {
         window?.level = .statusBar
         window?.makeMain()
 
-        contentViewController = SnipMaskViewController(frame: frame)
+        let viewController = SnipMaskViewController(frame: frame)
+        viewController.snipToolbar.rootView.delegate = self
+
+        contentViewController = viewController
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension SnipWindowController: SnipToolbarDelegate {
+    func onCancel() {
+        SnipManager.shared.cancel()
+    }
+
+    func onPin() {
+        print("pin")
     }
 }

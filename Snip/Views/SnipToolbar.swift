@@ -1,5 +1,5 @@
 //
-//  SnipToolBar.swift
+//  SnipToolbar.swift
 //  Snip
 //
 //  Created by Jiaxin Shou on 2021/12/2.
@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-@objc protocol SnipToolBarDelegate: AnyObject {
+@objc protocol SnipToolbarDelegate: AnyObject {
     @objc optional func onCancel()
 
     @objc optional func onPin()
 }
 
-struct SnipToolBar: View {
-    weak var delegate: SnipToolBarDelegate?
+struct SnipToolbar: View {
+    weak var delegate: SnipToolbarDelegate?
 
     var body: some View {
         HStack(spacing: 0) {
@@ -46,8 +46,8 @@ struct SnipToolBar: View {
     }
 }
 
-struct SnipToolBar_Previews: PreviewProvider {
+struct SnipToolbar_Previews: PreviewProvider {
     static var previews: some View {
-        SnipToolBar()
+        SnipToolbar()
     }
 }

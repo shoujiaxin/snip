@@ -30,7 +30,7 @@ class SnipMaskViewController: NSViewController {
 
     private let snipSizeLabel = NSHostingView(rootView: SnipSizeLabel(of: .zero))
 
-    private let snipToolBar = NSHostingView(rootView: SnipToolBar())
+    let snipToolbar = NSHostingView(rootView: SnipToolbar())
 
     // MARK: - States
 
@@ -69,12 +69,11 @@ class SnipMaskViewController: NSViewController {
         view.layer?.addSublayer(maskLayer)
 
         snipSizeLabel.isHidden = snipRect.isEmpty
-        snipToolBar.isHidden = snipRect.isEmpty
-        snipToolBar.rootView.delegate = self
+        snipToolbar.isHidden = snipRect.isEmpty
 
         view.addSubview(snipMask)
         view.addSubview(snipSizeLabel)
-        view.addSubview(snipToolBar)
+        view.addSubview(snipToolbar)
 
         view.addTrackingArea(NSTrackingArea(rect: frame, options: [.activeAlways, .mouseMoved], owner: self, userInfo: nil))
     }
@@ -88,9 +87,6 @@ class SnipMaskViewController: NSViewController {
         let currentLocation = event.locationInWindow
         snipBeginLocation = currentLocation
         snipEndLocation = currentLocation
-
-        // Unify coordinate
-        snipRect = snipRect.intersection(frame)
     }
 
     override func mouseDragged(with event: NSEvent) {
@@ -124,8 +120,11 @@ class SnipMaskViewController: NSViewController {
 
         snipEndLocation = currentLocation
 
-        updateMask()
-        snipToolBar.isHidden = true
+        // For multi displays
+        let rect = snipRect.intersection(frame)
+        updateMask(rect: rect)
+        updateSizeLabel(rect: rect)
+        snipToolbar.isHidden = true
     }
 
     override func mouseMoved(with event: NSEvent) {
@@ -168,19 +167,15 @@ class SnipMaskViewController: NSViewController {
     override func mouseUp(with event: NSEvent) {
         super.mouseUp(with: event)
 
-        let rect = snipRect.intersection(frame)
+        // Standardize coordinate
+        snipRect = snipRect.intersection(frame)
 
-        let toolBarSize = snipToolBar.intrinsicContentSize
-        let toolBarOrigin = NSPoint(x: max(rect.maxX - toolBarSize.width, frame.minX), y: max(snipMask.frame.minY - toolBarSize.height, frame.minY))
-        snipToolBar.frame = NSRect(origin: toolBarOrigin, size: toolBarSize)
-        snipToolBar.isHidden = rect.isEmpty
+        updateToolbar(rect: snipRect)
     }
 
     // MARK: - Private methods
 
-    private func updateMask() {
-        let rect = snipRect.intersection(frame)
-
+    private func updateMask(rect: NSRect) {
         let path = CGMutablePath()
         path.addRect(frame)
         path.addRect(rect)
@@ -188,21 +183,20 @@ class SnipMaskViewController: NSViewController {
 
         let inset = -snipMask.borderFrameWidth / 2
         snipMask.frame = rect.insetBy(dx: inset, dy: inset)
+    }
 
+    private func updateSizeLabel(rect: NSRect) {
         snipSizeLabel.rootView = SnipSizeLabel(of: rect)
-        let labelSize = snipSizeLabel.intrinsicContentSize
-        let labelOrigin = NSPoint(x: min(rect.minX, frame.maxX - labelSize.width), y: min(snipMask.frame.maxY, frame.maxY - labelSize.height))
-        snipSizeLabel.frame = NSRect(origin: labelOrigin, size: labelSize)
+        let size = snipSizeLabel.intrinsicContentSize
+        let origin = NSPoint(x: min(rect.minX, frame.maxX - size.width), y: min(snipMask.frame.maxY, frame.maxY - size.height))
+        snipSizeLabel.frame = NSRect(origin: origin, size: size)
         snipSizeLabel.isHidden = rect.isEmpty
     }
-}
 
-extension SnipMaskViewController: SnipToolBarDelegate {
-    func onCancel() {
-        view.window?.close()
-    }
-
-    func onPin() {
-        print("pin")
+    private func updateToolbar(rect: NSRect) {
+        let size = snipToolbar.intrinsicContentSize
+        let origin = NSPoint(x: max(rect.maxX - size.width, frame.minX), y: max(snipMask.frame.minY - size.height, frame.minY))
+        snipToolbar.frame = NSRect(origin: origin, size: size)
+        snipToolbar.isHidden = rect.isEmpty
     }
 }
