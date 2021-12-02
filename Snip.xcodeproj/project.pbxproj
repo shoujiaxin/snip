@@ -19,6 +19,7 @@
 		2998FBBD2756766E007CBAC0 /* SnipSizeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */; };
 		2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBE275688CE007CBAC0 /* SnipWindow.swift */; };
 		6BE58E1F2757775F0073CBAE /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE58E1E2757775F0073CBAE /* Extensions.swift */; };
+		6BE58E2227585F3E0073CBAE /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 6BE58E2127585F3E0073CBAE /* KeyboardShortcuts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6BE58E2227585F3E0073CBAE /* KeyboardShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,6 +148,9 @@
 			dependencies = (
 			);
 			name = Snip;
+			packageProductDependencies = (
+				6BE58E2127585F3E0073CBAE /* KeyboardShortcuts */,
+			);
 			productName = Snip;
 			productReference = 295AE67A27526FD500A0185C /* Snip.app */;
 			productType = "com.apple.product-type.application";
@@ -196,6 +201,9 @@
 				Base,
 			);
 			mainGroup = 295AE67127526FD500A0185C;
+			packageReferences = (
+				6BE58E2027585F3E0073CBAE /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+			);
 			productRefGroup = 295AE67B27526FD500A0185C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -526,6 +534,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6BE58E2027585F3E0073CBAE /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6BE58E2127585F3E0073CBAE /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6BE58E2027585F3E0073CBAE /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		295AE68127526FD500A0185C /* Snip.xcdatamodeld */ = {

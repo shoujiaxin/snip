@@ -6,19 +6,31 @@
 //
 
 import Cocoa
+import KeyboardShortcuts
+
+extension KeyboardShortcuts.Name {
+    static let snip = Self("snip")
+}
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
     func applicationDidFinishLaunching(_: Notification) {
+        KeyboardShortcuts.setShortcut(.init(.one, modifiers: [.command, .shift]), for: .snip)
+        KeyboardShortcuts.onKeyDown(for: .snip) { [weak self] in
+            self?.snip()
+        }
+
         statusItem.button?.image = NSImage(
             systemSymbolName: "camera.metering.spot",
             accessibilityDescription: nil
         )
 
         statusItem.menu = NSMenu()
+        statusItem.menu?.delegate = self
         statusItem.menu?.addItem(withTitle: "Snip", action: #selector(snip), keyEquivalent: "")
+        statusItem.menu?.items.last?.setShortcut(for: .snip)
         statusItem.menu?.addItem(.separator())
         statusItem.menu?.addItem(withTitle: "Preferences…", action: nil, keyEquivalent: ",")
         statusItem.menu?.addItem(.separator())
@@ -134,5 +146,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         // If we got here, it is time to quit.
         return .terminateNow
+    }
+}
+
+// MARK: - NSMenuDelegate
+
+extension AppDelegate: NSMenuDelegate {
+    func menuWillOpen(_: NSMenu) {
+        KeyboardShortcuts.disable(.snip)
+    }
+
+    func menuDidClose(_: NSMenu) {
+        KeyboardShortcuts.enable(.snip)
     }
 }
