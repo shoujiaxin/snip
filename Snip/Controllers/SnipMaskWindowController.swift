@@ -155,6 +155,8 @@ class SnipMaskWindowController: NSWindowController {
         } else if snipMask.topBorderFrame.contains(point) {
             mouseState = .resizeTop
             NSCursor.resizeUp.set()
+        } else if snipToolbar.frame.contains(point) {
+            NSCursor.arrow.set()
         } else {
             mouseState = .normal
             NSCursor.crosshair.set()
@@ -204,6 +206,29 @@ extension SnipMaskWindowController: SnipToolbarDelegate {
     }
 
     func onPin() {
-        SnipManager.shared.pinScreenshot(screenshot.cropped(to: snipRect), at: snipRect.origin)
+        let image = screenshot.cropped(to: snipRect)
+        SnipManager.shared.pinScreenshot(image, at: snipRect.origin)
+    }
+
+    func onSave() {
+        guard let window = window else {
+            return
+        }
+
+        let savePanel = NSSavePanel()
+        savePanel.nameFieldStringValue = Date().string + ".png"
+        savePanel.beginSheetModal(for: window) { [unowned self] response in
+            if response == .OK, let url = savePanel.url {
+                try? self.screenshot.cropped(to: self.snipRect).tiffRepresentation?.write(to: url)
+                SnipManager.shared.finishCapture()
+            }
+        }
+    }
+
+    func onCopy() {
+        let image = screenshot.cropped(to: snipRect)
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.writeObjects([image])
+        SnipManager.shared.finishCapture()
     }
 }

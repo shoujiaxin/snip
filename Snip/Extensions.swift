@@ -100,3 +100,11 @@ extension NSImage {
         return result
     }
 }
+
+extension Date {
+    var string: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        return formatter.string(from: self)
+    }
+}

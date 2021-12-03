@@ -17,6 +17,10 @@ class SnipImageWindowController: NSWindowController {
 
         window?.contentView = NSImageView(image: image)
         window?.contentView?.frame = NSRect(origin: .zero, size: image.size)
+
+        let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onDoubleClick))
+        doubleClickGestureRecognizer.numberOfClicksRequired = 2
+        window?.contentView?.addGestureRecognizer(doubleClickGestureRecognizer)
     }
 
     @available(*, unavailable)
@@ -27,8 +31,10 @@ class SnipImageWindowController: NSWindowController {
     override func mouseDragged(with event: NSEvent) {
         super.mouseDragged(with: event)
 
-        if let origin = window?.frame.origin {
-            window?.setFrameOrigin(NSPoint(x: origin.x + event.deltaX, y: origin.y - event.deltaY))
-        }
+        window?.performDrag(with: event)
+    }
+
+    @objc private func onDoubleClick() {
+        window?.cancelOperation(self)
     }
 }

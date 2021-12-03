@@ -17,6 +17,8 @@ class SnipImageWindow: NSWindow {
     }
 
     override func cancelOperation(_ sender: Any?) {
-        SnipManager.shared.removeScreenshot(sender)
+        super.cancelOperation(sender)
+
+        SnipManager.shared.removeScreenshot(self)
     }
 }

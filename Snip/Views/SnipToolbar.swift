@@ -11,6 +11,10 @@ import SwiftUI
     @objc optional func onCancel()
 
     @objc optional func onPin()
+
+    @objc optional func onSave()
+
+    @objc optional func onCopy()
 }
 
 struct SnipToolbar: View {
@@ -22,22 +26,27 @@ struct SnipToolbar: View {
                 delegate?.onCancel?()
             } label: {
                 Image(systemName: "xmark")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Rectangle())
-                    .foregroundColor(.white)
             }
-            .buttonStyle(.plain)
 
             Button {
                 delegate?.onPin?()
             } label: {
                 Image(systemName: "pin")
-                    .frame(width: 32, height: 32)
-                    .contentShape(Rectangle())
-                    .foregroundColor(.white)
             }
-            .buttonStyle(.plain)
+
+            Button {
+                delegate?.onSave?()
+            } label: {
+                Image(systemName: "square.and.arrow.down")
+            }
+
+            Button {
+                delegate?.onCopy?()
+            } label: {
+                Image(systemName: "doc.on.doc")
+            }
         }
+        .buttonStyle(ToolbarButtonStyle())
         .background {
             Color.black
                 .cornerRadius(4)
