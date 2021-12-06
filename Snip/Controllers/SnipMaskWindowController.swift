@@ -60,6 +60,7 @@ class SnipMaskWindowController: NSWindowController {
         window?.contentView?.wantsLayer = true
         window?.contentView?.layer?.addSublayer(maskLayer)
 
+        snipMask.addGestureRecognizer(NSPanGestureRecognizer(target: self, action: #selector(onMoveOrResize(gestureRecognizer:))))
         snipSizeLabel.isHidden = snipRect.isEmpty
         snipToolbar.isHidden = snipRect.isEmpty
         snipToolbar.rootView.delegate = self
@@ -68,6 +69,9 @@ class SnipMaskWindowController: NSWindowController {
         window?.contentView?.addSubview(snipSizeLabel)
         window?.contentView?.addSubview(snipToolbar)
 
+        let snipGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onSnip(gestureRecognizer:)))
+        snipGestureRecognizer.delegate = self
+        window?.contentView?.addGestureRecognizer(snipGestureRecognizer)
         window?.contentView?.addTrackingArea(NSTrackingArea(rect: frame, options: [.activeAlways, .mouseMoved], owner: self, userInfo: nil))
     }
 
@@ -77,52 +81,6 @@ class SnipMaskWindowController: NSWindowController {
     }
 
     // MARK: - Mouse events
-
-    override func mouseDown(with event: NSEvent) {
-        super.mouseDown(with: event)
-
-        // Drag begin
-        if mouseState == .normal {
-            snipRect.origin = NSPoint(x: event.locationInWindow.x, y: event.locationInWindow.y)
-        }
-    }
-
-    override func mouseDragged(with event: NSEvent) {
-        super.mouseDragged(with: event)
-
-        let deltaX = event.deltaX
-        let deltaY = -event.deltaY
-        switch mouseState {
-        case .normal:
-            snipRect.size = CGSize(width: event.locationInWindow.x - snipRect.origin.x, height: event.locationInWindow.y - snipRect.origin.y)
-        case .drag:
-            snipRect.offsetBy(dx: deltaX, dy: deltaY, in: frame)
-        case .resizeBottomLeft:
-            snipRect.moveCorner(.bottomLeft, dx: deltaX, dy: deltaY)
-        case .resizeBottomRight:
-            snipRect.moveCorner(.bottomRight, dx: deltaX, dy: deltaY)
-        case .resizeTopLeft:
-            snipRect.moveCorner(.topLeft, dx: deltaX, dy: deltaY)
-        case .resizeTopRight:
-            snipRect.moveCorner(.topRight, dx: deltaX, dy: deltaY)
-        case .resizeBottom:
-            snipRect.moveEdge(.bottom, delta: deltaY)
-        case .resizeLeft:
-            snipRect.moveEdge(.left, delta: deltaX)
-        case .resizeRight:
-            snipRect.moveEdge(.right, delta: deltaX)
-        case .resizeTop:
-            snipRect.moveEdge(.top, delta: deltaY)
-        }
-
-        // Standardize coordinate for multi displays
-        let rect = snipRect.intersection(frame)
-
-        // Update UI
-        updateMask(rect: rect)
-        updateSizeLabel(rect: rect)
-        snipToolbar.isHidden = true
-    }
 
     override func mouseMoved(with event: NSEvent) {
         super.mouseMoved(with: event)
@@ -163,13 +121,64 @@ class SnipMaskWindowController: NSWindowController {
         }
     }
 
-    override func mouseUp(with event: NSEvent) {
-        super.mouseUp(with: event)
+    @objc private func onSnip(gestureRecognizer: NSPanGestureRecognizer) {
+        let location = gestureRecognizer.location(in: window?.contentView)
+        switch gestureRecognizer.state {
+        case .began:
+            snipRect = NSRect(origin: location, size: .zero)
+            snipToolbar.isHidden = true
+        case .changed:
+            snipRect.size = CGSize(width: location.x - snipRect.origin.x, height: location.y - snipRect.origin.y)
+            // Standardize coordinate for multi displays
+            let rect = snipRect.intersection(frame)
+            // Update UI
+            updateMask(rect: rect)
+            updateSizeLabel(rect: rect)
+        case .ended:
+            snipRect = snipRect.intersection(frame)
+            updateToolbar(rect: snipRect)
+        default:
+            return
+        }
+    }
 
-        // Standardize coordinate
-        snipRect = snipRect.intersection(frame)
+    @objc private func onMoveOrResize(gestureRecognizer: NSPanGestureRecognizer) {
+        let translation = gestureRecognizer.translation(in: window?.contentView)
+        switch mouseState {
+        case .drag:
+            snipRect.offsetBy(dx: translation.x, dy: translation.y, in: frame)
+        case .resizeBottomLeft:
+            snipRect.moveCorner(.bottomLeft, dx: translation.x, dy: translation.y)
+        case .resizeBottomRight:
+            snipRect.moveCorner(.bottomRight, dx: translation.x, dy: translation.y)
+        case .resizeTopLeft:
+            snipRect.moveCorner(.topLeft, dx: translation.x, dy: translation.y)
+        case .resizeTopRight:
+            snipRect.moveCorner(.topRight, dx: translation.x, dy: translation.y)
+        case .resizeBottom:
+            snipRect.moveEdge(.bottom, delta: translation.y)
+        case .resizeLeft:
+            snipRect.moveEdge(.left, delta: translation.x)
+        case .resizeRight:
+            snipRect.moveEdge(.right, delta: translation.x)
+        case .resizeTop:
+            snipRect.moveEdge(.top, delta: translation.y)
+        default:
+            return
+        }
 
-        updateToolbar(rect: snipRect)
+        // Standardize coordinate for multi displays
+        let rect = snipRect.intersection(frame)
+        // Update UI
+        updateMask(rect: rect)
+        updateSizeLabel(rect: rect)
+        updateToolbar(rect: rect)
+        // Reset translation of pan gesture
+        gestureRecognizer.setTranslation(.zero, in: window?.contentView)
+
+        if gestureRecognizer.state == .ended {
+            snipRect = rect
+        }
     }
 
     // MARK: - Private methods
@@ -232,5 +241,14 @@ extension SnipMaskWindowController: SnipToolbarDelegate {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.writeObjects([image])
         SnipManager.shared.finishCapture()
+    }
+}
+
+// MARK: - NSGestureRecognizerDelegate
+
+extension SnipMaskWindowController: NSGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: NSGestureRecognizer) -> Bool {
+        let location = gestureRecognizer.location(in: window?.contentView)
+        return !snipToolbar.frame.contains(location)
     }
 }
