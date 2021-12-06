@@ -27,24 +27,28 @@ struct SnipToolbar: View {
             } label: {
                 Image(systemName: "xmark")
             }
+            .help("Cancel")
 
             Button {
                 delegate?.onPin?()
             } label: {
                 Image(systemName: "pin")
             }
+            .help("Pin")
 
             Button {
                 delegate?.onSave?()
             } label: {
                 Image(systemName: "square.and.arrow.down")
             }
+            .help("Save")
 
             Button {
                 delegate?.onCopy?()
             } label: {
                 Image(systemName: "doc.on.doc")
             }
+            .help("Copy")
         }
         .buttonStyle(ToolbarButtonStyle())
         .background {

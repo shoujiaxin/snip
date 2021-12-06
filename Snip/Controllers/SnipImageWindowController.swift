@@ -8,6 +8,8 @@
 import Cocoa
 
 class SnipImageWindowController: NSWindowController {
+    // MARK: - Lifecycle
+
     init(image: NSImage, origin: NSPoint, screen: NSScreen?) {
         super.init(window: SnipImageWindow(contentRect: NSRect(origin: origin, size: image.size), styleMask: .borderless, backing: .buffered, defer: false, screen: screen))
 
@@ -27,6 +29,8 @@ class SnipImageWindowController: NSWindowController {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Mouse events
 
     override func mouseDragged(with event: NSEvent) {
         super.mouseDragged(with: event)

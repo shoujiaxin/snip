@@ -51,7 +51,7 @@ class SnipMaskWindowController: NSWindowController {
         super.init(window: SnipMaskWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false, screen: screen))
 
         window?.backgroundColor = NSColor(patternImage: screenshot)
-        window?.level = .statusBar
+        window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
 
         maskLayer.fillColor = CGColor(gray: 0.5, alpha: 0.5)
@@ -199,6 +199,8 @@ class SnipMaskWindowController: NSWindowController {
         snipToolbar.isHidden = rect.isEmpty
     }
 }
+
+// MARK: - SnipToolbarDelegate
 
 extension SnipMaskWindowController: SnipToolbarDelegate {
     func onCancel() {

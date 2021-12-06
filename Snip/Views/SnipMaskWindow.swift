@@ -16,9 +16,7 @@ class SnipMaskWindow: NSWindow {
         true
     }
 
-    override func cancelOperation(_ sender: Any?) {
-        super.cancelOperation(sender)
-
+    override func cancelOperation(_: Any?) {
         SnipManager.shared.finishCapture()
     }
 
