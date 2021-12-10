@@ -34,21 +34,32 @@ class SnipMaskWindowController: NSWindowController {
 
     // MARK: - States
 
-    private let frame: NSRect
-
     private let screenshot: NSImage
+
+    private let windows: [WindowInfo]
 
     private var mouseState: MouseState = .normal
 
     private var snipRect: NSRect = .zero
 
+    private var bounds: NSRect {
+        window?.contentView?.bounds ?? .zero
+    }
+
     // MARK: - Lifecycle
 
     init(screen: NSScreen) {
-        frame = NSRect(origin: .zero, size: screen.frame.size)
-        screenshot = NSImage(cgImage: CGDisplayCreateImage(screen.displayID)!, size: frame.size)
+        screenshot = NSImage(cgImage: CGDisplayCreateImage(screen.displayID)!, size: screen.frame.size)
+        if let windowList = CGWindowListCopyWindowInfo(.optionOnScreenOnly, .zero) as? [NSDictionary] {
+            windows = windowList.compactMap { info in
+                let data = try? JSONSerialization.data(withJSONObject: info, options: .fragmentsAllowed)
+                return data.flatMap { try? JSONDecoder().decode(WindowInfo.self, from: $0) }
+            }
+        } else {
+            windows = []
+        }
 
-        super.init(window: SnipMaskWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false, screen: screen))
+        super.init(window: SnipMaskWindow(contentRect: screen.frame, styleMask: .borderless, backing: .buffered, defer: false))
 
         window?.backgroundColor = NSColor(patternImage: screenshot)
         window?.level = .init(Int(CGWindowLevel.max))
@@ -56,7 +67,7 @@ class SnipMaskWindowController: NSWindowController {
 
         maskLayer.fillColor = CGColor(gray: 0.5, alpha: 0.5)
         maskLayer.fillRule = .evenOdd
-        maskLayer.path = CGPath(rect: frame, transform: nil)
+        maskLayer.path = CGPath(rect: bounds, transform: nil)
         window?.contentView?.wantsLayer = true
         window?.contentView?.layer?.addSublayer(maskLayer)
 
@@ -72,7 +83,7 @@ class SnipMaskWindowController: NSWindowController {
         let snipGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onSnip(gestureRecognizer:)))
         snipGestureRecognizer.delegate = self
         window?.contentView?.addGestureRecognizer(snipGestureRecognizer)
-        window?.contentView?.addTrackingArea(NSTrackingArea(rect: frame, options: [.activeAlways, .mouseMoved], owner: self, userInfo: nil))
+        window?.contentView?.addTrackingArea(NSTrackingArea(rect: bounds, options: [.activeAlways, .mouseMoved], owner: self, userInfo: nil))
     }
 
     @available(*, unavailable)
@@ -119,6 +130,31 @@ class SnipMaskWindowController: NSWindowController {
             mouseState = .normal
             NSCursor.crosshair.set()
         }
+
+        if snipRect.isEmpty {
+            captureWindow()
+        }
+    }
+
+    private func captureWindow() {
+        guard let maskWindow = window else {
+            return
+        }
+
+        let location = NSEvent.mouseLocation
+        for window in windows {
+            let windowFrame = window.frame
+            if windowFrame.contains(location) {
+                let rect = NSRect(x: windowFrame.minX - maskWindow.frame.minX,
+                                  y: windowFrame.minY - maskWindow.frame.minY,
+                                  width: windowFrame.width,
+                                  height: windowFrame.height).intersection(bounds)
+                updateMask(rect: rect)
+                updateSizeLabel(rect: rect)
+                updateToolbar(rect: rect)
+                return
+            }
+        }
     }
 
     @objc private func onSnip(gestureRecognizer: NSPanGestureRecognizer) {
@@ -130,12 +166,12 @@ class SnipMaskWindowController: NSWindowController {
         case .changed:
             snipRect.size = CGSize(width: location.x - snipRect.origin.x, height: location.y - snipRect.origin.y)
             // Standardize coordinate for multi displays
-            let rect = snipRect.intersection(frame)
+            let rect = snipRect.intersection(bounds)
             // Update UI
             updateMask(rect: rect)
             updateSizeLabel(rect: rect)
         case .ended:
-            snipRect = snipRect.intersection(frame)
+            snipRect = snipRect.intersection(bounds)
             updateToolbar(rect: snipRect)
         default:
             return
@@ -146,7 +182,7 @@ class SnipMaskWindowController: NSWindowController {
         let translation = gestureRecognizer.translation(in: window?.contentView)
         switch mouseState {
         case .drag:
-            snipRect.offsetBy(dx: translation.x, dy: translation.y, in: frame)
+            snipRect.offsetBy(dx: translation.x, dy: translation.y, in: bounds)
         case .resizeBottomLeft:
             snipRect.moveCorner(.bottomLeft, dx: translation.x, dy: translation.y)
         case .resizeBottomRight:
@@ -168,7 +204,7 @@ class SnipMaskWindowController: NSWindowController {
         }
 
         // Standardize coordinate for multi displays
-        let rect = snipRect.intersection(frame)
+        let rect = snipRect.intersection(bounds)
         // Update UI
         updateMask(rect: rect)
         updateSizeLabel(rect: rect)
@@ -185,7 +221,7 @@ class SnipMaskWindowController: NSWindowController {
 
     private func updateMask(rect: NSRect) {
         let path = CGMutablePath()
-        path.addRect(frame)
+        path.addRect(bounds)
         path.addRect(rect)
         maskLayer.path = path
 
@@ -196,14 +232,14 @@ class SnipMaskWindowController: NSWindowController {
     private func updateSizeLabel(rect: NSRect) {
         snipSizeLabel.rootView = SnipSizeLabel(of: rect)
         let size = snipSizeLabel.intrinsicContentSize
-        let origin = NSPoint(x: min(rect.minX, frame.maxX - size.width), y: min(snipMask.frame.maxY, frame.maxY - size.height))
+        let origin = NSPoint(x: min(rect.minX, bounds.maxX - size.width), y: min(snipMask.frame.maxY, bounds.maxY - size.height))
         snipSizeLabel.frame = NSRect(origin: origin, size: size)
         snipSizeLabel.isHidden = rect.isEmpty
     }
 
     private func updateToolbar(rect: NSRect) {
         let size = snipToolbar.intrinsicContentSize
-        let origin = NSPoint(x: max(rect.maxX - size.width, frame.minX), y: max(snipMask.frame.minY - size.height, frame.minY))
+        let origin = NSPoint(x: max(rect.maxX - size.width, bounds.minX), y: max(snipMask.frame.minY - size.height, bounds.minY))
         snipToolbar.frame = NSRect(origin: origin, size: size)
         snipToolbar.isHidden = rect.isEmpty
     }
