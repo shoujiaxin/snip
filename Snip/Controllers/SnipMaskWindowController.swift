@@ -231,9 +231,19 @@ class SnipMaskWindowController: NSWindowController {
 
     private func updateSizeLabel(rect: NSRect) {
         snipSizeLabel.rootView = SnipSizeLabel(of: rect)
-        let size = snipSizeLabel.intrinsicContentSize
-        let origin = NSPoint(x: min(rect.minX, bounds.maxX - size.width), y: min(snipMask.frame.maxY, bounds.maxY - size.height))
-        snipSizeLabel.frame = NSRect(origin: origin, size: size)
+        var labelFrame = NSRect(origin: NSPoint(x: rect.minX, y: snipMask.frame.maxY), size: snipSizeLabel.intrinsicContentSize)
+        if labelFrame.maxY > bounds.maxY {
+            labelFrame.origin.x = snipMask.frame.minX - labelFrame.width
+            labelFrame.origin.y = rect.maxY - labelFrame.height
+        }
+        if labelFrame.minX < bounds.minX {
+            labelFrame.origin.x = snipMask.frame.maxX
+        }
+        if labelFrame.maxX > bounds.maxX {
+            labelFrame.origin.x = rect.minX
+            labelFrame.origin.y = max(snipMask.frame.minY - labelFrame.height, bounds.minY)
+        }
+        snipSizeLabel.frame = labelFrame
         snipSizeLabel.isHidden = rect.isEmpty
     }
 
