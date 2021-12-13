@@ -57,8 +57,21 @@ class SnipMask: NSView {
 
     var dragPointRadius: CGFloat = 5.0
 
-    var borderFrameWidth: CGFloat {
+    var maskFrame: NSRect {
+        get {
+            frame.insetBy(dx: maskEdgeInset, dy: maskEdgeInset)
+        }
+        set {
+            frame = newValue.insetBy(dx: -maskEdgeInset, dy: -maskEdgeInset)
+        }
+    }
+
+    private var borderFrameWidth: CGFloat {
         2 * (dragPointRadius + NSBezierPath.defaultLineWidth)
+    }
+
+    private var maskEdgeInset: CGFloat {
+        dragPointRadius + NSBezierPath.defaultLineWidth + borderWidth / 2
     }
 
     override func draw(_ dirtyRect: NSRect) {

@@ -31,8 +31,8 @@ class SnipManager {
         maskWindowController = nil
     }
 
-    func pinScreenshot(_ image: NSImage, at origin: NSPoint) {
-        let controller = SnipImageWindowController(image: image, origin: origin, screen: .current)
+    func pinScreenshot(_ image: NSImage, at location: NSPoint) {
+        let controller = SnipImageWindowController(image: image, location: location)
         controller.showWindow(self)
 
         imageWindowController.insert(controller)

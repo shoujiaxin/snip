@@ -10,8 +10,8 @@ import Cocoa
 class SnipImageWindowController: NSWindowController {
     // MARK: - Lifecycle
 
-    init(image: NSImage, origin: NSPoint, screen: NSScreen?) {
-        super.init(window: SnipImageWindow(contentRect: NSRect(origin: origin, size: image.size), styleMask: .borderless, backing: .buffered, defer: false, screen: screen))
+    init(image: NSImage, location: NSPoint) {
+        super.init(window: SnipImageWindow(contentRect: NSRect(origin: location, size: image.size), styleMask: .borderless, backing: .buffered, defer: false))
 
         window?.hasShadow = true
         window?.level = .statusBar

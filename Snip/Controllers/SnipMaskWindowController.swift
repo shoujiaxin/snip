@@ -51,10 +51,12 @@ class SnipMaskWindowController: NSWindowController {
     init(screen: NSScreen) {
         screenshot = NSImage(cgImage: CGDisplayCreateImage(screen.displayID)!, size: screen.frame.size)
         if let windowList = CGWindowListCopyWindowInfo(.optionOnScreenOnly, .zero) as? [NSDictionary] {
-            windows = windowList.compactMap { info in
-                let data = try? JSONSerialization.data(withJSONObject: info, options: .fragmentsAllowed)
-                return data.flatMap { try? JSONDecoder().decode(WindowInfo.self, from: $0) }
-            }
+            windows = windowList
+                .compactMap { info in
+                    let data = try? JSONSerialization.data(withJSONObject: info, options: .fragmentsAllowed)
+                    return data.flatMap { try? JSONDecoder().decode(WindowInfo.self, from: $0) }
+                }
+                .filter { screen.frame.contains($0.frame) && $0.ownerName != "Dock" }
         } else {
             windows = []
         }
@@ -71,7 +73,12 @@ class SnipMaskWindowController: NSWindowController {
         window?.contentView?.wantsLayer = true
         window?.contentView?.layer?.addSublayer(maskLayer)
 
-        snipMask.addGestureRecognizer(NSPanGestureRecognizer(target: self, action: #selector(onMoveOrResize(gestureRecognizer:))))
+        let moveAndResizeGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onMoveOrResize(gestureRecognizer:)))
+        moveAndResizeGestureRecognizer.delegate = self
+        snipMask.addGestureRecognizer(moveAndResizeGestureRecognizer)
+        let confirmWindowCaptureGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(confirmWindowCapture(gestureRecognizer:)))
+        confirmWindowCaptureGestureRecognizer.numberOfClicksRequired = 1
+        snipMask.addGestureRecognizer(confirmWindowCaptureGestureRecognizer)
         snipSizeLabel.isHidden = snipRect.isEmpty
         snipToolbar.isHidden = snipRect.isEmpty
         snipToolbar.rootView.delegate = self
@@ -95,6 +102,12 @@ class SnipMaskWindowController: NSWindowController {
 
     override func mouseMoved(with event: NSEvent) {
         super.mouseMoved(with: event)
+
+        if snipRect.isEmpty {
+            captureWindow()
+            NSCursor.crosshair.set()
+            return
+        }
 
         let point = event.locationInWindow
         if snipMask.contentFrame.contains(point) {
@@ -129,31 +142,6 @@ class SnipMaskWindowController: NSWindowController {
         } else {
             mouseState = .normal
             NSCursor.crosshair.set()
-        }
-
-        if snipRect.isEmpty {
-            captureWindow()
-        }
-    }
-
-    private func captureWindow() {
-        guard let maskWindow = window else {
-            return
-        }
-
-        let location = NSEvent.mouseLocation
-        for window in windows {
-            let windowFrame = window.frame
-            if windowFrame.contains(location) {
-                let rect = NSRect(x: windowFrame.minX - maskWindow.frame.minX,
-                                  y: windowFrame.minY - maskWindow.frame.minY,
-                                  width: windowFrame.width,
-                                  height: windowFrame.height).intersection(bounds)
-                updateMask(rect: rect)
-                updateSizeLabel(rect: rect)
-                updateToolbar(rect: rect)
-                return
-            }
         }
     }
 
@@ -217,6 +205,13 @@ class SnipMaskWindowController: NSWindowController {
         }
     }
 
+    @objc private func confirmWindowCapture(gestureRecognizer _: NSClickGestureRecognizer) {
+        if snipRect.isEmpty, !snipMask.frame.isEmpty {
+            snipRect = snipMask.maskFrame
+            updateToolbar(rect: snipRect)
+        }
+    }
+
     // MARK: - Private methods
 
     private func updateMask(rect: NSRect) {
@@ -225,8 +220,7 @@ class SnipMaskWindowController: NSWindowController {
         path.addRect(rect)
         maskLayer.path = path
 
-        let inset = -snipMask.borderFrameWidth / 2
-        snipMask.frame = rect.insetBy(dx: inset, dy: inset)
+        snipMask.maskFrame = rect
     }
 
     private func updateSizeLabel(rect: NSRect) {
@@ -253,6 +247,26 @@ class SnipMaskWindowController: NSWindowController {
         snipToolbar.frame = NSRect(origin: origin, size: size)
         snipToolbar.isHidden = rect.isEmpty
     }
+
+    private func captureWindow() {
+        guard let maskWindow = window else {
+            return
+        }
+
+        let location = NSEvent.mouseLocation
+        for window in windows {
+            let windowFrame = window.frame
+            if windowFrame.contains(location) {
+                let rect = NSRect(x: windowFrame.minX - maskWindow.frame.minX,
+                                  y: windowFrame.minY - maskWindow.frame.minY,
+                                  width: windowFrame.width,
+                                  height: windowFrame.height).intersection(bounds)
+                updateMask(rect: rect)
+                updateSizeLabel(rect: rect)
+                return
+            }
+        }
+    }
 }
 
 // MARK: - SnipToolbarDelegate
@@ -263,8 +277,12 @@ extension SnipMaskWindowController: SnipToolbarDelegate {
     }
 
     func onPin() {
+        guard let windowFrame = window?.frame else {
+            return
+        }
+
         let image = screenshot.cropped(to: snipRect)
-        SnipManager.shared.pinScreenshot(image, at: snipRect.origin)
+        SnipManager.shared.pinScreenshot(image, at: NSPoint(x: windowFrame.origin.x + snipRect.origin.x, y: windowFrame.origin.y + snipRect.origin.y))
     }
 
     func onSave() {
@@ -295,6 +313,14 @@ extension SnipMaskWindowController: SnipToolbarDelegate {
 extension SnipMaskWindowController: NSGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: NSGestureRecognizer) -> Bool {
         let location = gestureRecognizer.location(in: window?.contentView)
-        return !snipToolbar.frame.contains(location)
+        if snipToolbar.frame.contains(location) {
+            return false
+        }
+
+        if gestureRecognizer.view == snipMask, snipRect.isEmpty {
+            return false
+        }
+
+        return true
     }
 }
