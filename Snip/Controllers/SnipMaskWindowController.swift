@@ -63,7 +63,6 @@ class SnipMaskWindowController: NSWindowController {
 
         super.init(window: SnipMaskWindow(contentRect: screen.frame, styleMask: .borderless, backing: .buffered, defer: false))
 
-        window?.backgroundColor = NSColor(patternImage: screenshot)
         window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
 
@@ -71,6 +70,7 @@ class SnipMaskWindowController: NSWindowController {
         maskLayer.fillRule = .evenOdd
         maskLayer.path = CGPath(rect: bounds, transform: nil)
         window?.contentView?.wantsLayer = true
+        window?.contentView?.layer?.contents = screenshot
         window?.contentView?.layer?.addSublayer(maskLayer)
 
         let moveAndResizeGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onMoveOrResize(gestureRecognizer:)))

@@ -13,17 +13,25 @@ class SnipImageWindowController: NSWindowController {
 
     private let toolbar = NSHostingView(rootView: EditToolbar())
 
+    // MARK: - States
+
+    private let image: NSImage
+
     // MARK: - Lifecycle
 
     init(image: NSImage, location: NSPoint) {
+        self.image = image
+
         super.init(window: SnipImageWindow(contentRect: NSRect(origin: location, size: image.size), styleMask: .borderless, backing: .buffered, defer: false))
 
+        window?.aspectRatio = image.size
         window?.hasShadow = true
         window?.level = .statusBar
         window?.makeMain()
+        window?.styleMask = .resizable
 
-        window?.contentView = NSImageView(image: image)
-        window?.contentView?.frame = NSRect(origin: .zero, size: image.size)
+        window?.contentView?.wantsLayer = true
+        window?.contentView?.layer?.contents = image
 
         toolbar.isHidden = true
         toolbar.rootView.delegate = self
