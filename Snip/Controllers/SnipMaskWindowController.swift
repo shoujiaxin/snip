@@ -26,11 +26,11 @@ class SnipMaskWindowController: NSWindowController {
 
     private let maskLayer = CAShapeLayer()
 
-    private let snipMask = SnipMask(frame: .zero)
+    private let mask = SnipMask(frame: .zero)
 
-    private let snipSizeLabel = NSHostingView(rootView: SnipSizeLabel(of: .zero))
+    private let sizeLabel = NSHostingView(rootView: SnipSizeLabel(of: .zero))
 
-    private let snipToolbar = NSHostingView(rootView: SnipToolbar())
+    private let toolbar = NSHostingView(rootView: SnipToolbar())
 
     // MARK: - States
 
@@ -75,17 +75,17 @@ class SnipMaskWindowController: NSWindowController {
 
         let moveAndResizeGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onMoveOrResize(gestureRecognizer:)))
         moveAndResizeGestureRecognizer.delegate = self
-        snipMask.addGestureRecognizer(moveAndResizeGestureRecognizer)
+        mask.addGestureRecognizer(moveAndResizeGestureRecognizer)
         let confirmWindowCaptureGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(confirmWindowCapture(gestureRecognizer:)))
         confirmWindowCaptureGestureRecognizer.numberOfClicksRequired = 1
-        snipMask.addGestureRecognizer(confirmWindowCaptureGestureRecognizer)
-        snipSizeLabel.isHidden = snipRect.isEmpty
-        snipToolbar.isHidden = snipRect.isEmpty
-        snipToolbar.rootView.delegate = self
+        mask.addGestureRecognizer(confirmWindowCaptureGestureRecognizer)
+        sizeLabel.isHidden = true
+        toolbar.isHidden = true
+        toolbar.rootView.delegate = self
 
-        window?.contentView?.addSubview(snipMask)
-        window?.contentView?.addSubview(snipSizeLabel)
-        window?.contentView?.addSubview(snipToolbar)
+        window?.contentView?.addSubview(mask)
+        window?.contentView?.addSubview(sizeLabel)
+        window?.contentView?.addSubview(toolbar)
 
         let snipGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onSnip(gestureRecognizer:)))
         snipGestureRecognizer.delegate = self
@@ -110,34 +110,34 @@ class SnipMaskWindowController: NSWindowController {
         }
 
         let point = event.locationInWindow
-        if snipMask.contentFrame.contains(point) {
+        if mask.contentFrame.contains(point) {
             mouseState = .drag
             NSCursor.openHand.set()
-        } else if snipMask.bottomLeftCornerFrame.contains(point) {
+        } else if mask.bottomLeftCornerFrame.contains(point) {
             mouseState = .resizeBottomLeft
             NSCursor.crosshair.set() // TODO: Cursor
-        } else if snipMask.bottomRightCornerFrame.contains(point) {
+        } else if mask.bottomRightCornerFrame.contains(point) {
             mouseState = .resizeBottomRight
             NSCursor.crosshair.set() // TODO: Cursor
-        } else if snipMask.topLeftCornerFrame.contains(point) {
+        } else if mask.topLeftCornerFrame.contains(point) {
             mouseState = .resizeTopLeft
             NSCursor.crosshair.set() // TODO: Cursor
-        } else if snipMask.topRightCornerFrame.contains(point) {
+        } else if mask.topRightCornerFrame.contains(point) {
             mouseState = .resizeTopRight
             NSCursor.crosshair.set() // TODO: Cursor
-        } else if snipMask.bottomBorderFrame.contains(point) {
+        } else if mask.bottomBorderFrame.contains(point) {
             mouseState = .resizeBottom
             NSCursor.resizeDown.set()
-        } else if snipMask.leftBorderFrame.contains(point) {
+        } else if mask.leftBorderFrame.contains(point) {
             mouseState = .resizeLeft
             NSCursor.resizeLeft.set()
-        } else if snipMask.rightBorderFrame.contains(point) {
+        } else if mask.rightBorderFrame.contains(point) {
             mouseState = .resizeRight
             NSCursor.resizeRight.set()
-        } else if snipMask.topBorderFrame.contains(point) {
+        } else if mask.topBorderFrame.contains(point) {
             mouseState = .resizeTop
             NSCursor.resizeUp.set()
-        } else if snipToolbar.frame.contains(point) {
+        } else if toolbar.frame.contains(point) {
             NSCursor.arrow.set()
         } else {
             mouseState = .normal
@@ -150,7 +150,7 @@ class SnipMaskWindowController: NSWindowController {
         switch gestureRecognizer.state {
         case .began:
             snipRect = NSRect(origin: location, size: .zero)
-            snipToolbar.isHidden = true
+            toolbar.isHidden = true
         case .changed:
             snipRect.size = CGSize(width: location.x - snipRect.origin.x, height: location.y - snipRect.origin.y)
             // Standardize coordinate for multi displays
@@ -206,8 +206,8 @@ class SnipMaskWindowController: NSWindowController {
     }
 
     @objc private func confirmWindowCapture(gestureRecognizer _: NSClickGestureRecognizer) {
-        if snipRect.isEmpty, !snipMask.frame.isEmpty {
-            snipRect = snipMask.maskFrame
+        if snipRect.isEmpty, !mask.frame.isEmpty {
+            snipRect = mask.maskFrame
             updateToolbar(rect: snipRect)
         }
     }
@@ -220,32 +220,32 @@ class SnipMaskWindowController: NSWindowController {
         path.addRect(rect)
         maskLayer.path = path
 
-        snipMask.maskFrame = rect
+        mask.maskFrame = rect
     }
 
     private func updateSizeLabel(rect: NSRect) {
-        snipSizeLabel.rootView = SnipSizeLabel(of: rect)
-        var labelFrame = NSRect(origin: NSPoint(x: rect.minX, y: snipMask.frame.maxY), size: snipSizeLabel.intrinsicContentSize)
+        sizeLabel.rootView = SnipSizeLabel(of: rect)
+        var labelFrame = NSRect(origin: NSPoint(x: rect.minX, y: mask.frame.maxY), size: sizeLabel.intrinsicContentSize)
         if labelFrame.maxY > bounds.maxY {
-            labelFrame.origin.x = snipMask.frame.minX - labelFrame.width
+            labelFrame.origin.x = mask.frame.minX - labelFrame.width
             labelFrame.origin.y = rect.maxY - labelFrame.height
         }
         if labelFrame.minX < bounds.minX {
-            labelFrame.origin.x = snipMask.frame.maxX
+            labelFrame.origin.x = mask.frame.maxX
         }
         if labelFrame.maxX > bounds.maxX {
             labelFrame.origin.x = rect.minX
-            labelFrame.origin.y = max(snipMask.frame.minY - labelFrame.height, bounds.minY)
+            labelFrame.origin.y = max(mask.frame.minY - labelFrame.height, bounds.minY)
         }
-        snipSizeLabel.frame = labelFrame
-        snipSizeLabel.isHidden = rect.isEmpty
+        sizeLabel.frame = labelFrame
+        sizeLabel.isHidden = rect.isEmpty
     }
 
     private func updateToolbar(rect: NSRect) {
-        let size = snipToolbar.intrinsicContentSize
-        let origin = NSPoint(x: max(rect.maxX - size.width, bounds.minX), y: max(snipMask.frame.minY - size.height, bounds.minY))
-        snipToolbar.frame = NSRect(origin: origin, size: size)
-        snipToolbar.isHidden = rect.isEmpty
+        let size = toolbar.intrinsicContentSize
+        let origin = NSPoint(x: max(rect.maxX - size.width, bounds.minX), y: max(mask.frame.minY - size.height, bounds.minY))
+        toolbar.frame = NSRect(origin: origin, size: size)
+        toolbar.isHidden = rect.isEmpty
     }
 
     private func captureWindow() {
@@ -313,11 +313,11 @@ extension SnipMaskWindowController: SnipToolbarDelegate {
 extension SnipMaskWindowController: NSGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: NSGestureRecognizer) -> Bool {
         let location = gestureRecognizer.location(in: window?.contentView)
-        if snipToolbar.frame.contains(location) {
+        if toolbar.frame.contains(location) {
             return false
         }
 
-        if gestureRecognizer.view == snipMask, snipRect.isEmpty {
+        if gestureRecognizer.view == mask, snipRect.isEmpty {
             return false
         }
 

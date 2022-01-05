@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-@objc protocol SnipToolbarDelegate: AnyObject {
-    @objc optional func onCancel()
+protocol SnipToolbarDelegate: AnyObject {
+    func onCancel()
 
-    @objc optional func onPin()
+    func onPin()
 
-    @objc optional func onSave()
+    func onSave()
 
-    @objc optional func onCopy()
+    func onCopy()
 }
 
 struct SnipToolbar: View {
@@ -23,28 +23,28 @@ struct SnipToolbar: View {
     var body: some View {
         HStack(spacing: 0) {
             Button {
-                delegate?.onCancel?()
+                delegate?.onCancel()
             } label: {
                 Image(systemName: "xmark")
             }
             .help("Cancel")
 
             Button {
-                delegate?.onPin?()
+                delegate?.onPin()
             } label: {
                 Image(systemName: "pin")
             }
             .help("Pin")
 
             Button {
-                delegate?.onSave?()
+                delegate?.onSave()
             } label: {
                 Image(systemName: "square.and.arrow.down")
             }
             .help("Save")
 
             Button {
-                delegate?.onCopy?()
+                delegate?.onCopy()
             } label: {
                 Image(systemName: "doc.on.doc")
             }
