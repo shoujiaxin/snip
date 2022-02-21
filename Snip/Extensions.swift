@@ -8,14 +8,16 @@
 import Cocoa
 
 extension NSScreen {
+    /// Returns the screen object where the current mouse is located.
     static var current: NSScreen? {
         screens.first { screen in
             screen.frame.contains(NSEvent.mouseLocation)
         }
     }
 
+    /// Returns the `CGMainDisplayID` value associated with the screen.
     var displayID: CGDirectDisplayID {
-        deviceDescription[.init("NSScreenNumber")] as! CGDirectDisplayID
+        deviceDescription[.init("NSScreenNumber")] as? CGDirectDisplayID ?? .zero
     }
 }
 

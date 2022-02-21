@@ -8,33 +8,20 @@
 import Cocoa
 import KeyboardShortcuts
 
-extension KeyboardShortcuts.Name {
-    static let snip = Self("snip")
-}
-
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
     func applicationDidFinishLaunching(_: Notification) {
+        // TODO: add shortcuts recorder
         KeyboardShortcuts.setShortcut(.init(.one, modifiers: [.command, .shift]), for: .snip)
-        KeyboardShortcuts.onKeyDown(for: .snip) { [weak self] in
-            self?.snip()
+        KeyboardShortcuts.onKeyDown(for: .snip) {
+            SnipManager.shared.startCapture()
         }
 
-        statusItem.button?.image = NSImage(
-            systemSymbolName: "camera.metering.spot",
-            accessibilityDescription: nil
-        )
+        statusItem.button?.image = NSImage(systemSymbolName: "camera.metering.spot", accessibilityDescription: nil)
 
-        statusItem.menu = NSMenu()
-        statusItem.menu?.delegate = self
-        statusItem.menu?.addItem(withTitle: "Snip", action: #selector(snip), keyEquivalent: "")
-        statusItem.menu?.items.last?.setShortcut(for: .snip)
-        statusItem.menu?.addItem(.separator())
-        statusItem.menu?.addItem(withTitle: "Preferences…", action: nil, keyEquivalent: ",")
-        statusItem.menu?.addItem(.separator())
-        statusItem.menu?.addItem(withTitle: "Quit Snip", action: #selector(NSApp.terminate(_:)), keyEquivalent: "q")
+        setupStatusMenu()
     }
 
     func applicationWillTerminate(_: Notification) {
@@ -45,10 +32,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
-    // MARK: - Menu item actions
+    private func setupStatusMenu() {
+        statusItem.menu = NSMenu()
+        // Use the menu delegate to disable keyboard shortcuts when showing
+        statusItem.menu?.delegate = self
 
-    @objc private func snip() {
-        SnipManager.shared.startCapture()
+        let snipItem = NSMenuItem()
+        snipItem.action = #selector(SnipManager.startCapture)
+        snipItem.target = SnipManager.shared
+        snipItem.title = "Snip"
+        snipItem.setShortcut(for: .snip)
+
+        statusItem.menu?.addItem(snipItem)
+        statusItem.menu?.addItem(.separator())
+        statusItem.menu?.addItem(withTitle: "Preferences…", action: nil, keyEquivalent: ",")
+        statusItem.menu?.addItem(.separator())
+        statusItem.menu?.addItem(withTitle: "Quit Snip", action: #selector(NSApp.terminate(_:)), keyEquivalent: "q")
     }
 
     // MARK: - Core Data stack

@@ -22,7 +22,7 @@ class SnipImageWindowController: NSWindowController {
     init(image: NSImage, location: NSPoint) {
         self.image = image
 
-        super.init(window: SnipImageWindow(contentRect: NSRect(origin: location, size: image.size), styleMask: .borderless, backing: .buffered, defer: false))
+        super.init(window: SnipWindow(contentRect: NSRect(origin: location, size: image.size), styleMask: .borderless, backing: .buffered, defer: false))
 
         window?.aspectRatio = image.size
         window?.hasShadow = true
@@ -62,6 +62,10 @@ class SnipImageWindowController: NSWindowController {
         if event.characters == " " {
             toolbar.isHidden.toggle()
         }
+    }
+
+    override func cancelOperation(_: Any?) {
+        SnipManager.shared.removeScreenshot(self)
     }
 
     @objc private func onDoubleClick() {

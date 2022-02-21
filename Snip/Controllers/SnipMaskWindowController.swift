@@ -61,7 +61,7 @@ class SnipMaskWindowController: NSWindowController {
             windows = []
         }
 
-        super.init(window: SnipMaskWindow(contentRect: screen.frame, styleMask: .borderless, backing: .buffered, defer: false))
+        super.init(window: SnipWindow(contentRect: screen.frame, styleMask: .borderless, backing: .buffered, defer: false))
 
         window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
@@ -143,6 +143,10 @@ class SnipMaskWindowController: NSWindowController {
             mouseState = .normal
             NSCursor.crosshair.set()
         }
+    }
+
+    override func cancelOperation(_: Any?) {
+        SnipManager.shared.finishCapture()
     }
 
     @objc private func onSnip(gestureRecognizer: NSPanGestureRecognizer) {

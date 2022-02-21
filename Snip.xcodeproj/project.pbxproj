@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		290F98D527679FE40050D4DA /* EditToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290F98D427679FE40050D4DA /* EditToolbar.swift */; };
-		294063A227591C90006C77F7 /* SnipImageWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 294063A127591C90006C77F7 /* SnipImageWindow.swift */; };
 		295AE67E27526FD500A0185C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE67D27526FD500A0185C /* AppDelegate.swift */; };
 		295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 295AE68127526FD500A0185C /* Snip.xcdatamodeld */; };
 		295AE68527526FD600A0185C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 295AE68427526FD600A0185C /* Assets.xcassets */; };
@@ -18,8 +17,9 @@
 		295AE6B52753C41800A0185C /* SnipMaskWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6B42753C41800A0185C /* SnipMaskWindowController.swift */; };
 		2998FBB52755171E007CBAC0 /* SnipMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBB42755171E007CBAC0 /* SnipMask.swift */; };
 		2998FBBD2756766E007CBAC0 /* SnipSizeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */; };
-		2998FBBF275688CE007CBAC0 /* SnipMaskWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBE275688CE007CBAC0 /* SnipMaskWindow.swift */; };
+		2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBE275688CE007CBAC0 /* SnipWindow.swift */; };
 		29FB8C352763A62000174A11 /* WindowInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FB8C342763A62000174A11 /* WindowInfo.swift */; };
+		6B23BB8C27C3B34200D92A4A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B23BB8B27C3B34200D92A4A /* Constants.swift */; };
 		6B6D374F275A439B009CB9E3 /* ToolbarButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6D374E275A439B009CB9E3 /* ToolbarButtonStyle.swift */; };
 		6BE58E1F2757775F0073CBAE /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE58E1E2757775F0073CBAE /* Extensions.swift */; };
 		6BE58E2227585F3E0073CBAE /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 6BE58E2127585F3E0073CBAE /* KeyboardShortcuts */; };
@@ -39,7 +39,6 @@
 
 /* Begin PBXFileReference section */
 		290F98D427679FE40050D4DA /* EditToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditToolbar.swift; sourceTree = "<group>"; };
-		294063A127591C90006C77F7 /* SnipImageWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipImageWindow.swift; sourceTree = "<group>"; };
 		295AE67A27526FD500A0185C /* Snip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Snip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		295AE67D27526FD500A0185C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		295AE68227526FD500A0185C /* Snip.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Snip.xcdatamodel; sourceTree = "<group>"; };
@@ -53,8 +52,9 @@
 		295AE6B42753C41800A0185C /* SnipMaskWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMaskWindowController.swift; sourceTree = "<group>"; };
 		2998FBB42755171E007CBAC0 /* SnipMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMask.swift; sourceTree = "<group>"; };
 		2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipSizeLabel.swift; sourceTree = "<group>"; };
-		2998FBBE275688CE007CBAC0 /* SnipMaskWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMaskWindow.swift; sourceTree = "<group>"; };
+		2998FBBE275688CE007CBAC0 /* SnipWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindow.swift; sourceTree = "<group>"; };
 		29FB8C342763A62000174A11 /* WindowInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowInfo.swift; sourceTree = "<group>"; };
+		6B23BB8B27C3B34200D92A4A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		6B6D374E275A439B009CB9E3 /* ToolbarButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButtonStyle.swift; sourceTree = "<group>"; };
 		6BE58E1E2757775F0073CBAE /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		6BE58E23275876E70073CBAE /* SnipToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipToolbar.swift; sourceTree = "<group>"; };
@@ -101,17 +101,18 @@
 		295AE67C27526FD500A0185C /* Snip */ = {
 			isa = PBXGroup;
 			children = (
-				295AE6AB275271E200A0185C /* Info.plist */,
 				295AE67D27526FD500A0185C /* AppDelegate.swift */,
+				6B23BB8B27C3B34200D92A4A /* Constants.swift */,
 				6BE58E1E2757775F0073CBAE /* Extensions.swift */,
-				295AE68427526FD600A0185C /* Assets.xcassets */,
-				295AE68627526FD600A0185C /* Main.storyboard */,
-				295AE68927526FD600A0185C /* Snip.entitlements */,
-				295AE68127526FD500A0185C /* Snip.xcdatamodeld */,
 				295AE6AC2753758100A0185C /* SnipManager.swift */,
 				29FB8C332763A5FB00174A11 /* Models */,
 				2998FBB927566AC0007CBAC0 /* Views */,
 				2998FBB827566AB1007CBAC0 /* Controllers */,
+				295AE68627526FD600A0185C /* Main.storyboard */,
+				295AE68427526FD600A0185C /* Assets.xcassets */,
+				295AE68127526FD500A0185C /* Snip.xcdatamodeld */,
+				295AE6AB275271E200A0185C /* Info.plist */,
+				295AE68927526FD600A0185C /* Snip.entitlements */,
 			);
 			path = Snip;
 			sourceTree = "<group>";
@@ -137,8 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				6B6D374D275A438D009CB9E3 /* Modifiers */,
-				2998FBBE275688CE007CBAC0 /* SnipMaskWindow.swift */,
-				294063A127591C90006C77F7 /* SnipImageWindow.swift */,
+				2998FBBE275688CE007CBAC0 /* SnipWindow.swift */,
 				2998FBB42755171E007CBAC0 /* SnipMask.swift */,
 				2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */,
 				6BE58E23275876E70073CBAE /* SnipToolbar.swift */,
@@ -274,10 +274,10 @@
 				295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */,
 				6B6D374F275A439B009CB9E3 /* ToolbarButtonStyle.swift in Sources */,
 				295AE6AD2753758100A0185C /* SnipManager.swift in Sources */,
+				6B23BB8C27C3B34200D92A4A /* Constants.swift in Sources */,
 				295AE6B52753C41800A0185C /* SnipMaskWindowController.swift in Sources */,
 				295AE67E27526FD500A0185C /* AppDelegate.swift in Sources */,
-				2998FBBF275688CE007CBAC0 /* SnipMaskWindow.swift in Sources */,
-				294063A227591C90006C77F7 /* SnipImageWindow.swift in Sources */,
+				2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */,
 				2998FBB52755171E007CBAC0 /* SnipMask.swift in Sources */,
 				2998FBBD2756766E007CBAC0 /* SnipSizeLabel.swift in Sources */,
 				29FB8C352763A62000174A11 /* WindowInfo.swift in Sources */,

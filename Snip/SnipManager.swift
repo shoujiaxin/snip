@@ -14,7 +14,7 @@ class SnipManager {
 
     private var imageWindowController: Set<NSWindowController> = []
 
-    func startCapture() {
+    @objc func startCapture() {
         guard maskWindowController == nil else {
             return
         }
@@ -44,7 +44,7 @@ class SnipManager {
     }
 
     func removeScreenshot(_ sender: Any?) {
-        guard let sender = sender as? NSWindow, let controller = sender.windowController else {
+        guard let controller = sender as? NSWindowController else {
             return
         }
 
