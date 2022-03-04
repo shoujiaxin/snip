@@ -26,7 +26,7 @@ class SnipManager {
         NSApp.activate(ignoringOtherApps: true)
     }
 
-    func finishCapture() {
+    @objc func finishCapture() {
         maskWindowController?.close()
         maskWindowController = nil
     }

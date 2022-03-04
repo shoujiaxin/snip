@@ -109,7 +109,7 @@ class ResizableView: NSView {
 
         // Update tracking areas
         trackingAreas.forEach { removeTrackingArea($0) }
-        gestureRecognizers.forEach { $0.isEnabled = isResizable }
+        gestureRecognizers.first?.isEnabled = isResizable
         guard isResizable else {
             return
         }

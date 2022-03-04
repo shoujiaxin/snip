@@ -69,6 +69,13 @@ class SnipMaskWindowController: NSWindowController {
         let panGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onPanGesture(gestureRecognizer:)))
         panGestureRecognizer.delegate = self
         window?.contentView?.addGestureRecognizer(panGestureRecognizer)
+        let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: SnipManager.shared, action: #selector(SnipManager.finishCapture))
+        doubleClickGestureRecognizer.numberOfClicksRequired = 2
+        window?.contentView?.addGestureRecognizer(doubleClickGestureRecognizer)
+
+        let clickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onClickGesture(gestureRecognizer:)))
+        clickGestureRecognizer.numberOfClicksRequired = 1
+        resizingBox.addGestureRecognizer(clickGestureRecognizer)
 
         window?.contentView?.addTrackingArea(.init(rect: bounds, options: [.activeInActiveApp, .mouseEnteredAndExited, .mouseMoved], owner: self, userInfo: nil))
     }
@@ -96,18 +103,6 @@ class SnipMaskWindowController: NSWindowController {
         captureWindow()
     }
 
-    override func mouseDown(with event: NSEvent) {
-        super.mouseDown(with: event)
-
-        if resizingBox.isResizable || resizingBox.frame.isEmpty {
-            return
-        }
-
-        resizingBox.isResizable = true
-        resizingBox.needsDisplay = true
-        updateToolbar(resizingBox.contentFrame)
-    }
-
     override func cancelOperation(_: Any?) {
         SnipManager.shared.finishCapture()
     }
@@ -127,6 +122,16 @@ class SnipMaskWindowController: NSWindowController {
         default:
             return
         }
+    }
+
+    @objc private func onClickGesture(gestureRecognizer _: NSClickGestureRecognizer) {
+        if resizingBox.isResizable {
+            return
+        }
+
+        resizingBox.isResizable = true
+        resizingBox.needsDisplay = true
+        updateToolbar(resizingBox.contentFrame)
     }
 
     // MARK: - Update UI
