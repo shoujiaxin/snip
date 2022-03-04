@@ -9,13 +9,21 @@ import Cocoa
 
 protocol ResizableViewDelegate: AnyObject {
     /// Informs the delegate that the content's frame begins to move or resize.
-    func contentFrameWillBeginChanging()
+    func resizableView(_ view: ResizableView, contentFrameWillBeginChanging rect: NSRect)
 
     /// Informs the delegate that the content's frame is moved or resized.
-    func contentFrameDidChange(_ rect: NSRect)
+    func resizableView(_ view: ResizableView, contentFrameDidChange rect: NSRect)
 
     /// Informs the delegate that the content's frame has finished moving or resizing.
-    func contentFrameDidEndChanging(_ rect: NSRect)
+    func resizableView(_ view: ResizableView, contentFrameDidEndChanging rect: NSRect)
+}
+
+extension ResizableViewDelegate {
+    func resizableView(_: ResizableView, contentFrameWillBeginChanging _: NSRect) {}
+
+    func resizableView(_: ResizableView, contentFrameDidChange _: NSRect) {}
+
+    func resizableView(_: ResizableView, contentFrameDidEndChanging _: NSRect) {}
 }
 
 class ResizableView: NSView {
@@ -87,7 +95,7 @@ class ResizableView: NSView {
         super.draw(dirtyRect)
 
         defer {
-            delegate?.contentFrameDidChange(contentFrame)
+            delegate?.resizableView(self, contentFrameDidChange: contentFrame)
         }
 
         let inset = max(handleRadius + handleBorderWidth, borderWidth / 2)
@@ -169,7 +177,7 @@ class ResizableView: NSView {
         switch gestureRecognizer.state {
         case .began:
             resizingFrame = contentFrame
-            delegate?.contentFrameWillBeginChanging()
+            delegate?.resizableView(self, contentFrameWillBeginChanging: contentFrame)
         case .changed:
             let translation = gestureRecognizer.translation(in: self)
             switch resizingState {
@@ -196,7 +204,7 @@ class ResizableView: NSView {
                 needsDisplay = true
             }
         case .ended:
-            delegate?.contentFrameDidEndChanging(contentFrame)
+            delegate?.resizableView(self, contentFrameDidEndChanging: contentFrame)
         default:
             return
         }

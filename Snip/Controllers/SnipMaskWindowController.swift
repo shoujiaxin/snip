@@ -157,11 +157,11 @@ class SnipMaskWindowController: NSWindowController {
 // MARK: - ResizableViewDelegate
 
 extension SnipMaskWindowController: ResizableViewDelegate {
-    func contentFrameWillBeginChanging() {
+    func resizableView(_: ResizableView, contentFrameWillBeginChanging _: NSRect) {
         toolbar.isHidden = true
     }
 
-    func contentFrameDidChange(_ rect: NSRect) {
+    func resizableView(_ view: ResizableView, contentFrameDidChange rect: NSRect) {
         if rect.isEmpty {
             return
         }
@@ -174,23 +174,23 @@ extension SnipMaskWindowController: ResizableViewDelegate {
 
         // Update size label
         sizeLabel.rootView = SnipSizeLabel(of: rect)
-        var labelFrame = NSRect(origin: NSPoint(x: rect.minX, y: resizingBox.frame.maxY), size: sizeLabel.intrinsicContentSize)
+        var labelFrame = NSRect(origin: NSPoint(x: rect.minX, y: view.frame.maxY), size: sizeLabel.intrinsicContentSize)
         if labelFrame.maxY > bounds.maxY {
-            labelFrame.origin.x = resizingBox.frame.minX - labelFrame.width
+            labelFrame.origin.x = view.frame.minX - labelFrame.width
             labelFrame.origin.y = rect.maxY - labelFrame.height
         }
         if labelFrame.minX < bounds.minX {
-            labelFrame.origin.x = resizingBox.frame.maxX
+            labelFrame.origin.x = view.frame.maxX
         }
         if labelFrame.maxX > bounds.maxX {
             labelFrame.origin.x = rect.minX
-            labelFrame.origin.y = max(resizingBox.frame.minY - labelFrame.height, bounds.minY)
+            labelFrame.origin.y = max(view.frame.minY - labelFrame.height, bounds.minY)
         }
         sizeLabel.frame = labelFrame
         sizeLabel.isHidden = false
     }
 
-    func contentFrameDidEndChanging(_ rect: NSRect) {
+    func resizableView(_: ResizableView, contentFrameDidEndChanging rect: NSRect) {
         updateToolbar(rect)
     }
 }
