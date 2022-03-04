@@ -216,6 +216,13 @@ extension SnipMaskWindowController: NSGestureRecognizerDelegate {
 // MARK: - SnipToolbarDelegate
 
 extension SnipMaskWindowController: SnipToolbarDelegate {
+    private var croppedScreenshot: CGImage? {
+        let scale = CGFloat(screenshot.width) / bounds.width
+        let rect = resizingBox.contentFrame
+        let cropRect = CGRect(x: rect.origin.x * scale, y: (bounds.height - rect.origin.y - rect.height) * scale, width: rect.width * scale, height: rect.height * scale)
+        return screenshot.cropping(to: cropRect)
+    }
+
     func onCancel() {
         SnipManager.shared.finishCapture()
     }
