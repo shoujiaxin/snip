@@ -134,7 +134,7 @@ class SnipMaskWindowController: NSWindowController {
         updateToolbar(resizingBox.contentFrame)
     }
 
-    // MARK: - Update UI
+    // MARK: - Private methods
 
     private func updateToolbar(_ rect: NSRect) {
         let size = toolbar.intrinsicContentSize
