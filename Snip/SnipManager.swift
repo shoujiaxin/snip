@@ -12,7 +12,7 @@ class SnipManager {
 
     private var maskWindowController: SnipMaskWindowController?
 
-    private var imageWindowController: Set<NSWindowController> = []
+    private var imageWindowControllers: Set<NSWindowController> = []
 
     @objc func startCapture() {
         guard maskWindowController == nil else {
@@ -35,7 +35,7 @@ class SnipManager {
         let controller = SnipImageWindowController(image: image, location: location)
         controller.showWindow(self)
 
-        imageWindowController.insert(controller)
+        imageWindowControllers.insert(controller)
 
         finishCapture()
 
@@ -49,6 +49,6 @@ class SnipManager {
         }
 
         controller.close()
-        imageWindowController.remove(controller)
+        imageWindowControllers.remove(controller)
     }
 }

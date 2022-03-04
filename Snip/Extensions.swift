@@ -22,91 +22,31 @@ extension NSScreen {
 }
 
 extension NSRect {
-    enum Corner {
-        case bottomLeft
-        case bottomRight
-        case topLeft
-        case topRight
-    }
-
-    enum Edge {
-        case bottom
-        case left
-        case right
-        case top
-    }
-
-    mutating func moveCorner(_ corner: Corner, dx: CGFloat, dy: CGFloat) {
-        switch corner {
-        case .bottomLeft:
-            origin.x += dx
-            origin.y += dy
-            size.width -= dx
-            size.height -= dy
-        case .bottomRight:
-            origin.y += dy
-            size.width += dx
-            size.height -= dy
-        case .topLeft:
-            origin.x += dx
-            size.width -= dx
-            size.height += dy
-        case .topRight:
-            size.width += dx
-            size.height += dy
-        }
-    }
-
-    mutating func moveEdge(_ edge: Edge, delta: CGFloat) {
-        switch edge {
-        case .bottom:
-            origin.y += delta
-            size.height -= delta
-        case .left:
-            origin.x += delta
-            size.width -= delta
-        case .right:
-            size.width += delta
-        case .top:
-            size.height += delta
-        }
-    }
-
-    mutating func offsetBy(dx: CGFloat, dy: CGFloat, in rect: NSRect) {
-        let boundRect = rect.standardized
+    /// Returns a rectangle with an origin that is offset from that of the source rectangle but restricted to the bounds.
+    /// - Parameters:
+    ///   - dx: The offset value for the x-coordinate.
+    ///   - dy: The offset value for the y-coordinate.
+    ///   - bounds: Boundary limits.
+    /// - Returns: A rectangle that is the same size as the source, but with its origin offset by dx units along the x-axis and dy units along the y-axis with respect to the source.
+    func offsetBy(dx: CGFloat, dy: CGFloat, bounds: NSRect?) -> Self {
         var newRect = offsetBy(dx: dx, dy: dy).standardized
-
-        if newRect.minX < boundRect.minX {
-            newRect.origin.x = boundRect.minX
-        }
-        if newRect.minY < boundRect.minY {
-            newRect.origin.y = boundRect.minY
-        }
-        if newRect.maxX > boundRect.maxX {
-            newRect.origin.x = boundRect.maxX - newRect.width
-        }
-        if newRect.maxY > boundRect.maxY {
-            newRect.origin.y = boundRect.maxY - newRect.height
+        guard let standardizedBounds = bounds?.standardized else {
+            return newRect
         }
 
-        self = newRect
-    }
-}
+        if newRect.minX < standardizedBounds.minX {
+            newRect.origin.x = standardizedBounds.minX
+        }
+        if newRect.minY < standardizedBounds.minY {
+            newRect.origin.y = standardizedBounds.minY
+        }
+        if newRect.maxX > standardizedBounds.maxX {
+            newRect.origin.x = standardizedBounds.maxX - newRect.width
+        }
+        if newRect.maxY > standardizedBounds.maxY {
+            newRect.origin.y = standardizedBounds.maxY - newRect.height
+        }
 
-extension NSImage {
-    func cropped(to rect: NSRect) -> NSImage {
-        let result = NSImage(size: rect.size)
-        result.lockFocus()
-        draw(in: NSRect(origin: .zero, size: rect.size), from: rect, operation: .sourceOver, fraction: 1.0)
-        result.unlockFocus()
-        return result
-    }
-}
-
-extension Date {
-    var string: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        return formatter.string(from: self)
+        return newRect
     }
 }

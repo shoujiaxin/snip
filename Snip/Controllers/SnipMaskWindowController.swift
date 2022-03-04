@@ -9,24 +9,11 @@ import Cocoa
 import SwiftUI
 
 class SnipMaskWindowController: NSWindowController {
-    private enum MouseState {
-        case normal
-        case drag
-        case resizeBottomLeft
-        case resizeBottomRight
-        case resizeTopLeft
-        case resizeTopRight
-        case resizeBottom
-        case resizeLeft
-        case resizeRight
-        case resizeTop
-    }
-
     // MARK: - Views
 
     private let maskLayer = CAShapeLayer()
 
-    private let mask = SnipMask(frame: .zero)
+    private let resizingBox = ResizableView(frame: .zero)
 
     private let sizeLabel = NSHostingView(rootView: SnipSizeLabel(of: .zero))
 
@@ -37,10 +24,6 @@ class SnipMaskWindowController: NSWindowController {
     private let screenshot: NSImage
 
     private let windows: [WindowInfo]
-
-    private var mouseState: MouseState = .normal
-
-    private var snipRect: NSRect = .zero
 
     private var bounds: NSRect {
         window?.contentView?.bounds ?? .zero
@@ -73,24 +56,21 @@ class SnipMaskWindowController: NSWindowController {
         window?.contentView?.layer?.contents = screenshot
         window?.contentView?.layer?.addSublayer(maskLayer)
 
-        let moveAndResizeGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onMoveOrResize(gestureRecognizer:)))
-        moveAndResizeGestureRecognizer.delegate = self
-        mask.addGestureRecognizer(moveAndResizeGestureRecognizer)
-        let confirmWindowCaptureGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(confirmWindowCapture(gestureRecognizer:)))
-        confirmWindowCaptureGestureRecognizer.numberOfClicksRequired = 1
-        mask.addGestureRecognizer(confirmWindowCaptureGestureRecognizer)
+        resizingBox.isResizable = false
+        resizingBox.delegate = self
         sizeLabel.isHidden = true
         toolbar.isHidden = true
         toolbar.rootView.delegate = self
 
-        window?.contentView?.addSubview(mask)
+        window?.contentView?.addSubview(resizingBox)
         window?.contentView?.addSubview(sizeLabel)
         window?.contentView?.addSubview(toolbar)
 
-        let snipGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onSnip(gestureRecognizer:)))
-        snipGestureRecognizer.delegate = self
-        window?.contentView?.addGestureRecognizer(snipGestureRecognizer)
-        window?.contentView?.addTrackingArea(NSTrackingArea(rect: bounds, options: [.activeAlways, .mouseMoved], owner: self, userInfo: nil))
+        let panGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onPanGesture(gestureRecognizer:)))
+        panGestureRecognizer.delegate = self
+        window?.contentView?.addGestureRecognizer(panGestureRecognizer)
+
+        window?.contentView?.addTrackingArea(.init(rect: bounds, options: [.activeInActiveApp, .mouseEnteredAndExited, .mouseMoved], owner: self, userInfo: nil))
     }
 
     @available(*, unavailable)
@@ -98,217 +78,120 @@ class SnipMaskWindowController: NSWindowController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Mouse events
+    // MARK: - Mouse & keyboard events
+
+    override func mouseEntered(with event: NSEvent) {
+        super.mouseEntered(with: event)
+
+        window?.contentView?.addCursorRect(bounds, cursor: .crosshair)
+    }
 
     override func mouseMoved(with event: NSEvent) {
         super.mouseMoved(with: event)
 
-        if snipRect.isEmpty {
-            captureWindow()
-            NSCursor.crosshair.set()
+        if resizingBox.isResizable {
             return
         }
 
-        let point = event.locationInWindow
-        if mask.contentFrame.contains(point) {
-            mouseState = .drag
-            NSCursor.openHand.set()
-        } else if mask.bottomLeftCornerFrame.contains(point) {
-            mouseState = .resizeBottomLeft
-            NSCursor.crosshair.set() // TODO: Cursor
-        } else if mask.bottomRightCornerFrame.contains(point) {
-            mouseState = .resizeBottomRight
-            NSCursor.crosshair.set() // TODO: Cursor
-        } else if mask.topLeftCornerFrame.contains(point) {
-            mouseState = .resizeTopLeft
-            NSCursor.crosshair.set() // TODO: Cursor
-        } else if mask.topRightCornerFrame.contains(point) {
-            mouseState = .resizeTopRight
-            NSCursor.crosshair.set() // TODO: Cursor
-        } else if mask.bottomBorderFrame.contains(point) {
-            mouseState = .resizeBottom
-            NSCursor.resizeDown.set()
-        } else if mask.leftBorderFrame.contains(point) {
-            mouseState = .resizeLeft
-            NSCursor.resizeLeft.set()
-        } else if mask.rightBorderFrame.contains(point) {
-            mouseState = .resizeRight
-            NSCursor.resizeRight.set()
-        } else if mask.topBorderFrame.contains(point) {
-            mouseState = .resizeTop
-            NSCursor.resizeUp.set()
-        } else if toolbar.frame.contains(point) {
-            NSCursor.arrow.set()
-        } else {
-            mouseState = .normal
-            NSCursor.crosshair.set()
+        captureWindow()
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        super.mouseDown(with: event)
+
+        if resizingBox.isResizable || resizingBox.frame.isEmpty {
+            return
         }
+
+        resizingBox.isResizable = true
+        resizingBox.needsDisplay = true
+        updateToolbar(resizingBox.contentFrame)
     }
 
     override func cancelOperation(_: Any?) {
         SnipManager.shared.finishCapture()
     }
 
-    @objc private func onSnip(gestureRecognizer: NSPanGestureRecognizer) {
-        let location = gestureRecognizer.location(in: window?.contentView)
+    @objc private func onPanGesture(gestureRecognizer: NSPanGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
-            snipRect = NSRect(origin: location, size: .zero)
+            resizingBox.isResizable = true
             toolbar.isHidden = true
         case .changed:
-            snipRect.size = CGSize(width: location.x - snipRect.origin.x, height: location.y - snipRect.origin.y)
-            // Standardize coordinate for multi displays
-            let rect = snipRect.intersection(bounds)
-            // Update UI
-            updateMask(rect: rect)
-            updateSizeLabel(rect: rect)
+            let location = gestureRecognizer.location(in: window?.contentView)
+            let translation = gestureRecognizer.translation(in: window?.contentView)
+            let startPoint = NSPoint(x: location.x - translation.x, y: location.y - translation.y)
+            resizingBox.contentFrame = NSRect(origin: startPoint, size: .init(width: translation.x, height: translation.y))
         case .ended:
-            snipRect = snipRect.intersection(bounds)
-            updateToolbar(rect: snipRect)
+            updateToolbar(resizingBox.contentFrame)
         default:
             return
         }
     }
 
-    @objc private func onMoveOrResize(gestureRecognizer: NSPanGestureRecognizer) {
-        let translation = gestureRecognizer.translation(in: window?.contentView)
-        switch mouseState {
-        case .drag:
-            snipRect.offsetBy(dx: translation.x, dy: translation.y, in: bounds)
-        case .resizeBottomLeft:
-            snipRect.moveCorner(.bottomLeft, dx: translation.x, dy: translation.y)
-        case .resizeBottomRight:
-            snipRect.moveCorner(.bottomRight, dx: translation.x, dy: translation.y)
-        case .resizeTopLeft:
-            snipRect.moveCorner(.topLeft, dx: translation.x, dy: translation.y)
-        case .resizeTopRight:
-            snipRect.moveCorner(.topRight, dx: translation.x, dy: translation.y)
-        case .resizeBottom:
-            snipRect.moveEdge(.bottom, delta: translation.y)
-        case .resizeLeft:
-            snipRect.moveEdge(.left, delta: translation.x)
-        case .resizeRight:
-            snipRect.moveEdge(.right, delta: translation.x)
-        case .resizeTop:
-            snipRect.moveEdge(.top, delta: translation.y)
-        default:
+    // MARK: - Update UI
+
+    private func updateToolbar(_ rect: NSRect) {
+        let size = toolbar.intrinsicContentSize
+        let origin = NSPoint(x: max(rect.maxX - size.width, bounds.minX), y: max(resizingBox.frame.minY - size.height, bounds.minY))
+        toolbar.frame = NSRect(origin: origin, size: size)
+        toolbar.isHidden = false
+
+        window?.contentView?.addCursorRect(toolbar.frame, cursor: .arrow)
+    }
+
+    private func captureWindow() {
+        guard let maskWindowFrame = window?.frame,
+              let windowFrame = windows.first(where: { $0.frame.contains(NSEvent.mouseLocation) })?.frame
+        else {
             return
         }
 
-        // Standardize coordinate for multi displays
-        let rect = snipRect.intersection(bounds)
-        // Update UI
-        updateMask(rect: rect)
-        updateSizeLabel(rect: rect)
-        updateToolbar(rect: rect)
-        // Reset translation of pan gesture
-        gestureRecognizer.setTranslation(.zero, in: window?.contentView)
+        resizingBox.contentFrame = NSRect(x: windowFrame.minX - maskWindowFrame.minX,
+                                          y: windowFrame.minY - maskWindowFrame.minY,
+                                          width: windowFrame.width,
+                                          height: windowFrame.height).intersection(bounds)
+    }
+}
 
-        if gestureRecognizer.state == .ended {
-            snipRect = rect
-        }
+// MARK: - ResizableViewDelegate
+
+extension SnipMaskWindowController: ResizableViewDelegate {
+    func contentFrameWillBeginChanging() {
+        toolbar.isHidden = true
     }
 
-    @objc private func confirmWindowCapture(gestureRecognizer _: NSClickGestureRecognizer) {
-        if snipRect.isEmpty, !mask.frame.isEmpty {
-            snipRect = mask.maskFrame
-            updateToolbar(rect: snipRect)
+    func contentFrameDidChange(_ rect: NSRect) {
+        if rect.isEmpty {
+            return
         }
-    }
 
-    // MARK: - Private methods
-
-    private func updateMask(rect: NSRect) {
+        // Update mask layer
         let path = CGMutablePath()
         path.addRect(bounds)
         path.addRect(rect)
         maskLayer.path = path
 
-        mask.maskFrame = rect
-    }
-
-    private func updateSizeLabel(rect: NSRect) {
+        // Update size label
         sizeLabel.rootView = SnipSizeLabel(of: rect)
-        var labelFrame = NSRect(origin: NSPoint(x: rect.minX, y: mask.frame.maxY), size: sizeLabel.intrinsicContentSize)
+        var labelFrame = NSRect(origin: NSPoint(x: rect.minX, y: resizingBox.frame.maxY), size: sizeLabel.intrinsicContentSize)
         if labelFrame.maxY > bounds.maxY {
-            labelFrame.origin.x = mask.frame.minX - labelFrame.width
+            labelFrame.origin.x = resizingBox.frame.minX - labelFrame.width
             labelFrame.origin.y = rect.maxY - labelFrame.height
         }
         if labelFrame.minX < bounds.minX {
-            labelFrame.origin.x = mask.frame.maxX
+            labelFrame.origin.x = resizingBox.frame.maxX
         }
         if labelFrame.maxX > bounds.maxX {
             labelFrame.origin.x = rect.minX
-            labelFrame.origin.y = max(mask.frame.minY - labelFrame.height, bounds.minY)
+            labelFrame.origin.y = max(resizingBox.frame.minY - labelFrame.height, bounds.minY)
         }
         sizeLabel.frame = labelFrame
-        sizeLabel.isHidden = rect.isEmpty
+        sizeLabel.isHidden = false
     }
 
-    private func updateToolbar(rect: NSRect) {
-        let size = toolbar.intrinsicContentSize
-        let origin = NSPoint(x: max(rect.maxX - size.width, bounds.minX), y: max(mask.frame.minY - size.height, bounds.minY))
-        toolbar.frame = NSRect(origin: origin, size: size)
-        toolbar.isHidden = rect.isEmpty
-    }
-
-    private func captureWindow() {
-        guard let maskWindow = window else {
-            return
-        }
-
-        let location = NSEvent.mouseLocation
-        for window in windows {
-            let windowFrame = window.frame
-            if windowFrame.contains(location) {
-                let rect = NSRect(x: windowFrame.minX - maskWindow.frame.minX,
-                                  y: windowFrame.minY - maskWindow.frame.minY,
-                                  width: windowFrame.width,
-                                  height: windowFrame.height).intersection(bounds)
-                updateMask(rect: rect)
-                updateSizeLabel(rect: rect)
-                return
-            }
-        }
-    }
-}
-
-// MARK: - SnipToolbarDelegate
-
-extension SnipMaskWindowController: SnipToolbarDelegate {
-    func onCancel() {
-        SnipManager.shared.finishCapture()
-    }
-
-    func onPin() {
-        guard let windowFrame = window?.frame else {
-            return
-        }
-
-        let image = screenshot.cropped(to: snipRect)
-        SnipManager.shared.pinScreenshot(image, at: NSPoint(x: windowFrame.origin.x + snipRect.origin.x, y: windowFrame.origin.y + snipRect.origin.y))
-    }
-
-    func onSave() {
-        guard let window = window else {
-            return
-        }
-
-        let savePanel = NSSavePanel()
-        savePanel.nameFieldStringValue = Date().string + ".png"
-        savePanel.beginSheetModal(for: window) { [unowned self] response in
-            if response == .OK, let url = savePanel.url {
-                try? self.screenshot.cropped(to: self.snipRect).tiffRepresentation?.write(to: url)
-                SnipManager.shared.finishCapture()
-            }
-        }
-    }
-
-    func onCopy() {
-        let image = screenshot.cropped(to: snipRect)
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.writeObjects([image])
-        SnipManager.shared.finishCapture()
+    func contentFrameDidEndChanging(_ rect: NSRect) {
+        updateToolbar(rect)
     }
 }
 
@@ -321,10 +204,20 @@ extension SnipMaskWindowController: NSGestureRecognizerDelegate {
             return false
         }
 
-        if gestureRecognizer.view == mask, snipRect.isEmpty {
-            return false
-        }
-
         return true
     }
+}
+
+// MARK: - SnipToolbarDelegate
+
+extension SnipMaskWindowController: SnipToolbarDelegate {
+    func onCancel() {
+        SnipManager.shared.finishCapture()
+    }
+
+    func onPin() {}
+
+    func onSave() {}
+
+    func onCopy() {}
 }
