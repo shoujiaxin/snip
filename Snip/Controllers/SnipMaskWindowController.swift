@@ -21,7 +21,7 @@ class SnipMaskWindowController: NSWindowController {
 
     // MARK: - States
 
-    private let screenshot: NSImage
+    private let screenshot: CGImage
 
     private let windows: [WindowInfo]
 
@@ -32,7 +32,7 @@ class SnipMaskWindowController: NSWindowController {
     // MARK: - Lifecycle
 
     init(screen: NSScreen) {
-        screenshot = NSImage(cgImage: CGDisplayCreateImage(screen.displayID)!, size: screen.frame.size)
+        screenshot = CGDisplayCreateImage(screen.displayID)!
         if let windowList = CGWindowListCopyWindowInfo(.optionOnScreenOnly, .zero) as? [NSDictionary] {
             windows = windowList
                 .compactMap { info in
