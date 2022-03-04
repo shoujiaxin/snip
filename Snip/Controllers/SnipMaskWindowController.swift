@@ -231,5 +231,14 @@ extension SnipMaskWindowController: SnipToolbarDelegate {
 
     func onSave() {}
 
-    func onCopy() {}
+    func onCopy() {
+        guard let image = croppedScreenshot.map({ NSImage(cgImage: $0, size: .init(width: $0.width, height: $0.height)) }) else {
+            return
+        }
+
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.writeObjects([image])
+
+        SnipManager.shared.finishCapture()
+    }
 }
