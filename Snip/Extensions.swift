@@ -50,3 +50,21 @@ extension NSRect {
         return newRect
     }
 }
+
+extension NSImage {
+    func cropped(to rect: NSRect) -> NSImage {
+        let croppedImage = NSImage(size: rect.size)
+        croppedImage.lockFocus()
+        draw(in: NSRect(origin: .zero, size: rect.size), from: rect, operation: .sourceOver, fraction: 1.0)
+        croppedImage.unlockFocus()
+        return croppedImage
+    }
+}
+
+extension Date {
+    var string: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH.mm.ss"
+        return formatter.string(from: self)
+    }
+}

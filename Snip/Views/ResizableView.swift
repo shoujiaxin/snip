@@ -92,12 +92,6 @@ class ResizableView: NSView {
     }
 
     override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-
-        defer {
-            delegate?.resizableView(self, contentFrameDidChange: contentFrame)
-        }
-
         let inset = max(handleRadius + handleBorderWidth, borderWidth / 2)
         let rect = dirtyRect.insetBy(dx: inset, dy: inset)
 
@@ -117,6 +111,7 @@ class ResizableView: NSView {
         Area.allCases.forEach { addCursorRect($0.frame(in: bounds, contentPadding: 2 * borderInset), cursor: $0.cursor) }
 
         // Draw resizing handles
+        // FIXME: Performance
         let minShowHandleSize = 10 * (handleRadius + handleBorderWidth)
         guard dirtyRect.width > minShowHandleSize, dirtyRect.height > minShowHandleSize else {
             return
@@ -130,6 +125,12 @@ class ResizableView: NSView {
         handleBorderColor.setStroke()
         handles.lineWidth = handleBorderWidth
         handles.stroke()
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+
+        delegate?.resizableView(self, contentFrameDidChange: contentFrame)
     }
 
     override func cursorUpdate(with event: NSEvent) {

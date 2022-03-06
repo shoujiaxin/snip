@@ -220,9 +220,36 @@ extension SnipMaskWindowController: SnipToolbarDelegate {
         SnipManager.shared.finishCapture()
     }
 
-    func onPin() {}
+    func onPin() {
+        guard let windowFrame = window?.frame else {
+            return
+        }
 
-    func onSave() {}
+        let imageFrame = resizingBox.contentFrame
+        let image = screenshot.cropped(to: imageFrame)
+        SnipManager.shared.pinScreenshot(image, at: .init(x: windowFrame.origin.x + imageFrame.origin.x, y: windowFrame.origin.y + imageFrame.origin.y))
+    }
 
-    func onCopy() {}
+    func onSave() {
+        guard let window = window else {
+            return
+        }
+
+        let savePanel = NSSavePanel()
+        savePanel.allowedContentTypes = [.png]
+        savePanel.nameFieldStringValue = "Snip \(Date().string)"
+        savePanel.beginSheetModal(for: window) { [unowned self] response in
+            if response == .OK, let url = savePanel.url {
+                try? self.screenshot.cropped(to: self.resizingBox.contentFrame).tiffRepresentation?.write(to: url)
+                SnipManager.shared.finishCapture()
+            }
+        }
+    }
+
+    func onCopy() {
+        let image = screenshot.cropped(to: resizingBox.contentFrame)
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.writeObjects([image])
+        SnipManager.shared.finishCapture()
+    }
 }
