@@ -11,6 +11,8 @@ import SwiftUI
 class SnipImageWindowController: NSWindowController {
     // MARK: - Views
 
+    private let imageView = NSView()
+
     private let toolbar = NSHostingView(rootView: EditToolbar())
 
     // MARK: - States
@@ -22,27 +24,43 @@ class SnipImageWindowController: NSWindowController {
     init(image: NSImage, location: NSPoint) {
         self.image = image
 
-        super.init(window: SnipWindow(contentRect: NSRect(origin: location, size: image.size), styleMask: .borderless, backing: .buffered, defer: false))
+        super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -20, dy: -20), styleMask: .borderless, backing: .buffered, defer: false))
 
         window?.aspectRatio = image.size
-        window?.hasShadow = true
-        window?.level = .statusBar
+        window?.backgroundColor = .clear
+        window?.delegate = self
+        window?.isOpaque = false
+        window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
-        window?.styleMask = .resizable
 
-        window?.contentView?.wantsLayer = true
-        window?.contentView?.layer?.contents = image
-
+        imageView.frame = .init(x: 20, y: 20, width: image.size.width, height: image.size.height)
+        imageView.shadow = .init()
+        imageView.wantsLayer = true
+        imageView.layer?.borderColor = .white.copy(alpha: 0.5)
+        imageView.layer?.contents = image
+        imageView.layer?.shadowColor = NSColor.controlAccentColor.cgColor
+        imageView.layer?.shadowOpacity = 0.8
+        imageView.layer?.shadowRadius = 6
         toolbar.isHidden = true
         toolbar.rootView.delegate = self
 
+        window?.contentView?.addSubview(imageView)
         window?.contentView?.addSubview(toolbar)
 
-        let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onDoubleClick))
+        let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onDoubleClickGesture))
         doubleClickGestureRecognizer.numberOfClicksRequired = 2
         window?.contentView?.addGestureRecognizer(doubleClickGestureRecognizer)
 
         updateToolbar()
+
+        NSAnimationContext.runAnimationGroup { _ in
+            let animation = CABasicAnimation(keyPath: "borderWidth")
+            animation.duration = 0.4
+            animation.repeatCount = 2
+            animation.fromValue = 2
+            animation.toValue = 0
+            imageView.layer?.add(animation, forKey: "borderWidth")
+        }
     }
 
     @available(*, unavailable)
@@ -68,7 +86,7 @@ class SnipImageWindowController: NSWindowController {
         SnipManager.shared.removeScreenshot(self)
     }
 
-    @objc private func onDoubleClick() {
+    @objc private func onDoubleClickGesture() {
         window?.cancelOperation(self)
     }
 
@@ -82,6 +100,18 @@ class SnipImageWindowController: NSWindowController {
         let size = toolbar.intrinsicContentSize
         let origin = NSPoint(x: frame.width - size.width, y: 0)
         toolbar.frame = NSRect(origin: origin, size: size)
+    }
+}
+
+// MARK: - NSWindowDelegate
+
+extension SnipImageWindowController: NSWindowDelegate {
+    func windowDidBecomeKey(_: Notification) {
+        imageView.layer?.shadowColor = NSColor.controlAccentColor.cgColor
+    }
+
+    func windowDidResignKey(_: Notification) {
+        imageView.layer?.shadowColor = NSColor.gray.cgColor
     }
 }
 
