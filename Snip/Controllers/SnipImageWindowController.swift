@@ -11,13 +11,13 @@ import SwiftUI
 class SnipImageWindowController: NSWindowController {
     // MARK: - Views
 
-    private let imageView = NSView()
-
     private let toolbarWindow = NSWindow()
 
     // MARK: - States
 
     private let image: NSImage
+
+    private let editor = SnipImageEditor()
 
     // MARK: - Lifecycle
 
@@ -33,15 +33,7 @@ class SnipImageWindowController: NSWindowController {
         window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
 
-        imageView.frame = .init(x: 10, y: 10, width: image.size.width, height: image.size.height)
-        imageView.shadow = .init()
-        imageView.wantsLayer = true
-        imageView.layer?.borderColor = .white.copy(alpha: 0.5)
-        imageView.layer?.contents = image
-        imageView.layer?.shadowColor = NSColor.controlAccentColor.cgColor
-        imageView.layer?.shadowOpacity = 0.8
-        imageView.layer?.shadowRadius = 6
-        window?.contentView?.addSubview(imageView)
+        window?.contentView = NSHostingView(rootView: SnipImageView(image: image).environmentObject(editor))
 
         let toolbar = NSHostingView(rootView: EditToolbar(delegate: self))
         toolbarWindow.alphaValue = 0
@@ -59,15 +51,6 @@ class SnipImageWindowController: NSWindowController {
         let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onDoubleClickGesture))
         doubleClickGestureRecognizer.numberOfClicksRequired = 2
         window?.contentView?.addGestureRecognizer(doubleClickGestureRecognizer)
-
-        NSAnimationContext.runAnimationGroup { _ in
-            let animation = CABasicAnimation(keyPath: "borderWidth")
-            animation.duration = 0.4
-            animation.repeatCount = 2
-            animation.fromValue = 2
-            animation.toValue = 0
-            imageView.layer?.add(animation, forKey: "borderWidth")
-        }
     }
 
     @available(*, unavailable)
@@ -103,11 +86,11 @@ class SnipImageWindowController: NSWindowController {
 
 extension SnipImageWindowController: NSWindowDelegate {
     func windowDidBecomeKey(_: Notification) {
-        imageView.layer?.shadowColor = NSColor.controlAccentColor.cgColor
+        editor.isFocused = true
     }
 
     func windowDidResignKey(_: Notification) {
-        imageView.layer?.shadowColor = NSColor.gray.cgColor
+        editor.isFocused = false
     }
 }
 
