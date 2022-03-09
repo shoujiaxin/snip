@@ -59,6 +59,7 @@ class SnipImageWindowController: NSWindowController {
         let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onDoubleClickGesture))
         doubleClickGestureRecognizer.numberOfClicksRequired = 2
         window?.contentView?.addGestureRecognizer(doubleClickGestureRecognizer)
+        window?.contentView?.addGestureRecognizer(NSPanGestureRecognizer(target: self, action: #selector(onPanGesture(rec:))))
 
         NSAnimationContext.runAnimationGroup { _ in
             let animation = CABasicAnimation(keyPath: "borderWidth")
@@ -77,11 +78,37 @@ class SnipImageWindowController: NSWindowController {
 
     // MARK: - Mouse & keyboard events
 
-    override func mouseDragged(with event: NSEvent) {
-        super.mouseDragged(with: event)
+//    override func mouseDragged(with event: NSEvent) {
+//        super.mouseDragged(with: event)
+//
+//        window?.performDrag(with: event)
+//        toolbarWindow.performDrag(with: event)
+//    }
 
-        window?.performDrag(with: event)
-        toolbarWindow.performDrag(with: event)
+    private var shapeLayers: [CAShapeLayer] = []
+
+    @objc func onPanGesture(rec: NSPanGestureRecognizer) {
+        switch rec.state {
+        case .began:
+            let layer = CAShapeLayer()
+            layer.strokeColor = NSColor.black.cgColor
+            layer.lineWidth = 3
+            layer.fillColor = NSColor.clear.cgColor
+            shapeLayers.append(layer)
+            imageView.layer?.addSublayer(layer)
+        case .changed:
+            let location = rec.location(in: imageView)
+            let translation = rec.translation(in: imageView)
+            let startPoint = NSPoint(x: location.x - translation.x, y: location.y - translation.y)
+            print(startPoint)
+            let path = CGMutablePath()
+            path.addRect(.init(origin: startPoint, size: .init(width: translation.x, height: translation.y)))
+            shapeLayers.last?.path = path
+        case .ended:
+            return
+        default:
+            return
+        }
     }
 
     override func keyDown(with event: NSEvent) {
