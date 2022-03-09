@@ -79,10 +79,18 @@ class ResizableView: NSView {
     /// The current state of resizing.
     private var resizingState: ResizingState = .none
 
+    private let borderLayer = CAShapeLayer()
+
     // MARK: - Lifecycle
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
+
+        wantsLayer = true
+        borderLayer.fillColor = .clear
+        borderLayer.strokeColor = NSColor.red.cgColor
+        borderLayer.lineWidth = 3
+        layer?.addSublayer(borderLayer)
 
         addGestureRecognizer(NSPanGestureRecognizer(target: self, action: #selector(onPanGesture(gestureRecognizer:))))
     }
@@ -95,12 +103,15 @@ class ResizableView: NSView {
         let inset = max(handleRadius + handleBorderWidth, borderWidth / 2)
         let rect = dirtyRect.insetBy(dx: inset, dy: inset)
 
-        // Draw border
-        let border = NSBezierPath(rect: rect)
-        borderColor.setStroke()
-        border.lineWidth = borderWidth
-        border.stroke()
+        let border = CGMutablePath()
+        border.addRect(rect)
 
+//        // Draw border
+//        let border = NSBezierPath(rect: rect)
+//        borderColor.setStroke()
+//        border.lineWidth = borderWidth
+//        border.stroke()
+//
         // Update tracking areas
         trackingAreas.forEach { removeTrackingArea($0) }
         gestureRecognizers.first?.isEnabled = isResizable
@@ -116,15 +127,19 @@ class ResizableView: NSView {
         guard dirtyRect.width > minShowHandleSize, dirtyRect.height > minShowHandleSize else {
             return
         }
-        let handles = NSBezierPath()
+//        let handles = NSBezierPath()
+
         Area.allCases
             .compactMap { $0.resizingHandleFrame(in: rect, size: 2 * handleRadius) }
-            .forEach { handles.appendOval(in: $0) }
-        handleColor.setFill()
-        handles.fill()
-        handleBorderColor.setStroke()
-        handles.lineWidth = handleBorderWidth
-        handles.stroke()
+            .forEach { border.addEllipse(in: $0) }
+//        handleColor.setFill()
+//        handles.fill()
+//        handleBorderColor.setStroke()
+//        handles.lineWidth = handleBorderWidth
+//        handles.stroke()
+
+        borderLayer.path = border
+        layer?.display()
     }
 
     override func updateTrackingAreas() {
