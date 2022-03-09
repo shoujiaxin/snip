@@ -13,7 +13,7 @@ class SnipImageWindowController: NSWindowController {
 
     private let imageView = NSView()
 
-    private let toolbar = NSHostingView(rootView: EditToolbar())
+    private let toolbarWindow = NSWindow()
 
     // MARK: - States
 
@@ -24,7 +24,7 @@ class SnipImageWindowController: NSWindowController {
     init(image: NSImage, location: NSPoint) {
         self.image = image
 
-        super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -20, dy: -20), styleMask: .borderless, backing: .buffered, defer: false))
+        super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -10, dy: -10), styleMask: .borderless, backing: .buffered, defer: false))
 
         window?.aspectRatio = image.size
         window?.backgroundColor = .clear
@@ -33,7 +33,7 @@ class SnipImageWindowController: NSWindowController {
         window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
 
-        imageView.frame = .init(x: 20, y: 20, width: image.size.width, height: image.size.height)
+        imageView.frame = .init(x: 10, y: 10, width: image.size.width, height: image.size.height)
         imageView.shadow = .init()
         imageView.wantsLayer = true
         imageView.layer?.borderColor = .white.copy(alpha: 0.5)
@@ -41,17 +41,24 @@ class SnipImageWindowController: NSWindowController {
         imageView.layer?.shadowColor = NSColor.controlAccentColor.cgColor
         imageView.layer?.shadowOpacity = 0.8
         imageView.layer?.shadowRadius = 6
-        toolbar.isHidden = true
-        toolbar.rootView.delegate = self
-
         window?.contentView?.addSubview(imageView)
-        window?.contentView?.addSubview(toolbar)
+
+        let toolbar = NSHostingView(rootView: EditToolbar(delegate: self))
+        toolbarWindow.alphaValue = 0
+        toolbarWindow.backgroundColor = .clear
+        toolbarWindow.contentView = toolbar
+        toolbarWindow.isOpaque = false
+        toolbarWindow.order(.above, relativeTo: window!.windowNumber)
+        toolbarWindow.setFrame(.init(origin: .init(x: location.x + image.size.width - toolbar.intrinsicContentSize.width,
+                                                   y: location.y - toolbar.intrinsicContentSize.height / 2),
+                                     size: toolbar.intrinsicContentSize),
+                               display: false)
+        toolbarWindow.styleMask = .borderless
+        window?.addChildWindow(toolbarWindow, ordered: .above)
 
         let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onDoubleClickGesture))
         doubleClickGestureRecognizer.numberOfClicksRequired = 2
         window?.contentView?.addGestureRecognizer(doubleClickGestureRecognizer)
-
-        updateToolbar()
 
         NSAnimationContext.runAnimationGroup { _ in
             let animation = CABasicAnimation(keyPath: "borderWidth")
@@ -74,11 +81,12 @@ class SnipImageWindowController: NSWindowController {
         super.mouseDragged(with: event)
 
         window?.performDrag(with: event)
+        toolbarWindow.performDrag(with: event)
     }
 
     override func keyDown(with event: NSEvent) {
         if event.characters == " " {
-            toolbar.isHidden.toggle()
+            toolbarWindow.alphaValue = 1 - toolbarWindow.alphaValue
         }
     }
 
@@ -88,18 +96,6 @@ class SnipImageWindowController: NSWindowController {
 
     @objc private func onDoubleClickGesture() {
         window?.cancelOperation(self)
-    }
-
-    // MARK: - Private methods
-
-    private func updateToolbar() {
-        guard let frame = window?.frame else {
-            return
-        }
-
-        let size = toolbar.intrinsicContentSize
-        let origin = NSPoint(x: frame.width - size.width, y: 0)
-        toolbar.frame = NSRect(origin: origin, size: size)
     }
 }
 
@@ -127,6 +123,6 @@ extension SnipImageWindowController: EditToolbarDelegate {
     }
 
     func onDone() {
-        toolbar.isHidden = true
+        toolbarWindow.alphaValue = 0
     }
 }
