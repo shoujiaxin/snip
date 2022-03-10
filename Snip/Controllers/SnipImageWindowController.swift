@@ -15,14 +15,18 @@ class SnipImageWindowController: NSWindowController {
 
     // MARK: - States
 
-    private let image: NSImage
+    private let editor: SnipImageEditor
 
-    private let editor = SnipImageEditor()
+    /// The window's frame when scaling.
+    private var scalingFrame: NSRect?
+
+    /// The scale of the window when scaling.
+    private var scalingFactor: CGFloat = 1.0
 
     // MARK: - Lifecycle
 
     init(image: NSImage, location: NSPoint) {
-        self.image = image
+        editor = SnipImageEditor(image)
 
         super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -10, dy: -10), styleMask: .borderless, backing: .buffered, defer: false))
 
@@ -33,7 +37,7 @@ class SnipImageWindowController: NSWindowController {
         window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
 
-        window?.contentView = NSHostingView(rootView: SnipImageView(image: image).environmentObject(editor))
+        window?.contentView = NSHostingView(rootView: SnipImageView().environmentObject(editor))
 
         let toolbar = NSHostingView(rootView: EditToolbar(delegate: self))
         toolbarWindow.alphaValue = 0
@@ -67,6 +71,26 @@ class SnipImageWindowController: NSWindowController {
         toolbarWindow.performDrag(with: event)
     }
 
+    override func scrollWheel(with event: NSEvent) {
+        super.scrollWheel(with: event)
+
+        switch event.phase {
+        case .began:
+            scalingFrame = window?.frame
+            scalingFactor = 1.0
+        case .changed:
+            var delta = event.scrollingDeltaY / 60
+            delta = min(delta, 0.1)
+            delta = max(delta, -0.1)
+            scalingFactor += delta
+            scalingFactor = min(scalingFactor, 5)
+            scalingFactor = max(scalingFactor, 0)
+            scaled(by: scalingFactor, at: NSEvent.mouseLocation)
+        default:
+            return
+        }
+    }
+
     override func keyDown(with event: NSEvent) {
         if event.characters == " " {
             toolbarWindow.alphaValue = 1 - toolbarWindow.alphaValue
@@ -79,6 +103,23 @@ class SnipImageWindowController: NSWindowController {
 
     @objc private func onDoubleClickGesture() {
         window?.cancelOperation(self)
+    }
+
+    private func scaled(by scale: CGFloat, at location: NSPoint) {
+        guard let frame = scalingFrame else {
+            return
+        }
+
+        let transform = CGAffineTransform(translationX: location.x, y: location.y)
+            .scaledBy(x: scale, y: scale)
+            .translatedBy(x: -location.x, y: -location.y)
+        let scaledFrame = frame.applying(transform)
+        if scaledFrame.width < 50 || scaledFrame.height < 50 {
+            return
+        }
+
+        window?.setFrame(scaledFrame, display: true)
+        editor.imageScaled(scaledFrame)
     }
 }
 
