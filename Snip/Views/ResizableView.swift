@@ -34,7 +34,7 @@ class ResizableView: NSView {
     var borderColor: NSColor = .controlAccentColor
 
     /// The width of the resizable view's border.
-    var borderWidth: CGFloat = 3
+    var borderWidth: CGFloat = 2
 
     /// The color of the resizing handle.
     var handleColor: NSColor = .controlAccentColor

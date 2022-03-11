@@ -23,12 +23,15 @@ class SnipImageWindowController: NSWindowController {
     /// The scale of the window when scaling.
     private var scalingFactor: CGFloat = 1.0
 
+    /// The mouse location when scaling begins.
+    private var scalingCenter: NSPoint = .zero
+
     // MARK: - Lifecycle
 
     init(image: NSImage, location: NSPoint) {
         editor = SnipImageEditor(image)
 
-        super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -10, dy: -10), styleMask: .borderless, backing: .buffered, defer: false))
+        super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -20, dy: -20), styleMask: .borderless, backing: .buffered, defer: false))
 
         window?.aspectRatio = image.size
         window?.backgroundColor = .clear
@@ -78,6 +81,7 @@ class SnipImageWindowController: NSWindowController {
         case .began:
             scalingFrame = window?.frame
             scalingFactor = 1.0
+            scalingCenter = NSEvent.mouseLocation
         case .changed:
             var delta = event.scrollingDeltaY / 60
             delta = min(delta, 0.1)
@@ -85,7 +89,7 @@ class SnipImageWindowController: NSWindowController {
             scalingFactor += delta
             scalingFactor = min(scalingFactor, 5)
             scalingFactor = max(scalingFactor, 0)
-            scaled(by: scalingFactor, at: NSEvent.mouseLocation)
+            scaled(by: scalingFactor, at: scalingCenter)
         default:
             return
         }

@@ -10,7 +10,7 @@ import SwiftUI
 struct SnipImageView: View {
     @EnvironmentObject private var editor: SnipImageEditor
 
-    @State private var borderWidth: CGFloat = 3
+    @State private var borderWidth: CGFloat = 2
 
     @State private var scaleLabelAlpha: CGFloat = 0
 
@@ -18,8 +18,8 @@ struct SnipImageView: View {
         ZStack {
             Image(nsImage: editor.image)
                 .resizable()
-                .shadow(color: editor.isFocused ? .accentColor : .gray, radius: 5, x: 0, y: 0)
-                .border(Color.accentColor, width: borderWidth)
+                .shadow(color: editor.isFocused ? .accentColor : .gray, radius: 6, x: 0, y: 0)
+                .border(Color.accentColor.opacity(0.6), width: borderWidth)
                 .onAppear {
                     withAnimation(.easeInOut(duration: 0.2).repeatCount(2)) {
                         borderWidth = 0
@@ -51,7 +51,7 @@ struct SnipImageView: View {
                 Spacer()
             }
         }
-        .padding(10)
+        .padding(20)
     }
 }
 
