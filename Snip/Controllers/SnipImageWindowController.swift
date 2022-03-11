@@ -42,7 +42,22 @@ class SnipImageWindowController: NSWindowController {
 
         window?.contentView = NSHostingView(rootView: SnipImageView().environmentObject(editor))
 
-        let toolbar = NSHostingView(rootView: EditToolbar(delegate: self))
+        let toolbarItems: [ToolbarItem] = [
+            .button(name: "Shape", iconName: "rectangle") {},
+            .button(name: "Arrow", iconName: "arrow.up.right") {},
+            .button(name: "Draw", iconName: "scribble") {},
+            .button(name: "Highlight", iconName: "highlighter") {},
+            .button(name: "Mosaic", iconName: "mosaic") {},
+            .button(name: "Text", iconName: "character") {},
+            .divider,
+            .button(name: "Undo", iconName: "arrow.uturn.backward") {},
+            .button(name: "Redo", iconName: "arrow.uturn.forward") {},
+            .divider,
+            .button(name: "Save", iconName: "square.and.arrow.down") { [weak self] in self?.onSave() },
+            .button(name: "Copy", iconName: "doc.on.doc") { [weak self] in self?.onCopy() },
+            .button(name: "Done", iconName: "checkmark") { [weak self] in self?.onDone() },
+        ]
+        let toolbar = NSHostingView(rootView: ToolbarView(items: toolbarItems))
         toolbarWindow.animationBehavior = .utilityWindow
         toolbarWindow.backgroundColor = .clear
         toolbarWindow.contentView = toolbar
@@ -156,9 +171,9 @@ extension SnipImageWindowController: NSWindowDelegate {
     }
 }
 
-// MARK: - EditToolbarDelegate
+// MARK: - Edit toolbar actions
 
-extension SnipImageWindowController: EditToolbarDelegate {
+private extension SnipImageWindowController {
     func onSave() {
         // TODO: Save
     }

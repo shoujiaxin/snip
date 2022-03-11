@@ -17,7 +17,7 @@ class SnipMaskWindowController: NSWindowController {
 
     private let sizeLabel = NSHostingView(rootView: SnipSizeLabel(of: .zero))
 
-    private let toolbar = NSHostingView(rootView: SnipToolbar())
+    private var toolbar: NSHostingView<ToolbarView>!
 
     // MARK: - States
 
@@ -33,6 +33,7 @@ class SnipMaskWindowController: NSWindowController {
 
     init(screen: NSScreen) {
         screenshot = NSImage(cgImage: CGDisplayCreateImage(screen.displayID)!, size: screen.frame.size)
+
         if let windowList = CGWindowListCopyWindowInfo(.optionOnScreenOnly, .zero) as? [NSDictionary] {
             windows = windowList
                 .compactMap { info in
@@ -59,8 +60,14 @@ class SnipMaskWindowController: NSWindowController {
         resizingBox.isResizable = false
         resizingBox.delegate = self
         sizeLabel.isHidden = true
+        let toolbarItems: [ToolbarItem] = [
+            .button(name: "Cancel", iconName: "xmark") { [weak self] in self?.onCancel() },
+            .button(name: "Pin", iconName: "pin") { [weak self] in self?.onPin() },
+            .button(name: "Save", iconName: "square.and.arrow.down") { [weak self] in self?.onSave() },
+            .button(name: "Copy", iconName: "doc.on.doc") { [weak self] in self?.onCopy() },
+        ]
+        toolbar = NSHostingView(rootView: ToolbarView(items: toolbarItems))
         toolbar.isHidden = true
-        toolbar.rootView.delegate = self
 
         window?.contentView?.addSubview(resizingBox)
         window?.contentView?.addSubview(sizeLabel)
@@ -213,9 +220,9 @@ extension SnipMaskWindowController: NSGestureRecognizerDelegate {
     }
 }
 
-// MARK: - SnipToolbarDelegate
+// MARK: - Snip toolbar actions
 
-extension SnipMaskWindowController: SnipToolbarDelegate {
+private extension SnipMaskWindowController {
     func onCancel() {
         SnipManager.shared.finishCapture()
     }
