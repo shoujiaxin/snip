@@ -43,21 +43,18 @@ class SnipImageWindowController: NSWindowController {
         window?.contentView = NSHostingView(rootView: SnipImageView().environmentObject(editor))
 
         let toolbar = NSHostingView(rootView: EditToolbar(delegate: self))
-        toolbarWindow.alphaValue = 0
+        toolbarWindow.animationBehavior = .utilityWindow
         toolbarWindow.backgroundColor = .clear
         toolbarWindow.contentView = toolbar
         toolbarWindow.isOpaque = false
-        toolbarWindow.order(.above, relativeTo: window!.windowNumber)
-        toolbarWindow.setFrame(.init(origin: .init(x: location.x + image.size.width - toolbar.intrinsicContentSize.width,
-                                                   y: location.y - toolbar.intrinsicContentSize.height / 2),
-                                     size: toolbar.intrinsicContentSize),
-                               display: false)
         toolbarWindow.styleMask = .borderless
-        window?.addChildWindow(toolbarWindow, ordered: .above)
+        toolbarWindow.setFrame(.init(origin: .zero, size: toolbar.intrinsicContentSize), display: false)
 
         let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onDoubleClickGesture))
         doubleClickGestureRecognizer.numberOfClicksRequired = 2
         window?.contentView?.addGestureRecognizer(doubleClickGestureRecognizer)
+
+        hideToolbar()
     }
 
     @available(*, unavailable)
@@ -71,7 +68,6 @@ class SnipImageWindowController: NSWindowController {
         super.mouseDragged(with: event)
 
         window?.performDrag(with: event)
-        toolbarWindow.performDrag(with: event)
     }
 
     override func scrollWheel(with event: NSEvent) {
@@ -97,7 +93,11 @@ class SnipImageWindowController: NSWindowController {
 
     override func keyDown(with event: NSEvent) {
         if event.characters == " " {
-            toolbarWindow.alphaValue = 1 - toolbarWindow.alphaValue
+            if toolbarWindow.isVisible {
+                hideToolbar()
+            } else {
+                showToolbar()
+            }
         }
     }
 
@@ -125,6 +125,23 @@ class SnipImageWindowController: NSWindowController {
         window?.setFrame(scaledFrame, display: true)
         editor.imageScaled(scaledFrame)
     }
+
+    private func hideToolbar() {
+        toolbarWindow.setIsVisible(false)
+        window?.removeChildWindow(toolbarWindow)
+    }
+
+    private func showToolbar() {
+        guard let frame = window?.frame else {
+            return
+        }
+
+        let origin = NSPoint(x: frame.maxX - toolbarWindow.frame.width - 20, y: frame.minY - toolbarWindow.frame.height + 10)
+        let size = toolbarWindow.frame.size
+        toolbarWindow.setFrame(.init(origin: origin, size: size), display: true)
+        toolbarWindow.setIsVisible(true)
+        window?.addChildWindow(toolbarWindow, ordered: .above)
+    }
 }
 
 // MARK: - NSWindowDelegate
@@ -151,6 +168,6 @@ extension SnipImageWindowController: EditToolbarDelegate {
     }
 
     func onDone() {
-        toolbarWindow.alphaValue = 0
+        hideToolbar()
     }
 }
