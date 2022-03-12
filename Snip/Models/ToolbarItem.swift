@@ -6,11 +6,14 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum ToolbarItem {
     case divider
 
     case button(name: String, iconName: String, action: () -> Void)
+
+    case tabItem(name: String, iconName: String, action: () -> Void)
 }
 
 extension ToolbarItem: Identifiable {
@@ -18,8 +21,15 @@ extension ToolbarItem: Identifiable {
         switch self {
         case .divider:
             return UUID().uuidString
-        case let .button(name, iconName, _):
+        case let .button(name, iconName, _),
+             let .tabItem(name, iconName, _):
             return "\(name).\(iconName)"
         }
+    }
+}
+
+extension ToolbarItem: Equatable {
+    static func == (lhs: ToolbarItem, rhs: ToolbarItem) -> Bool {
+        return lhs.id == rhs.id
     }
 }

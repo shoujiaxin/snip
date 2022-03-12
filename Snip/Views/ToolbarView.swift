@@ -12,6 +12,8 @@ struct ToolbarView: View {
 
     @State private var hoveringItem: ToolbarItem? = nil
 
+    @State private var selectedItem: ToolbarItem? = nil
+
     var body: some View {
         HStack(spacing: 0) {
             ForEach(items) { item in
@@ -19,12 +21,27 @@ struct ToolbarView: View {
                 case .divider:
                     Divider()
                         .frame(height: 20)
-                case let .button(name: name, iconName: iconName, action: action):
-                    Button(action: action) {
+                case let .button(name, iconName, action),
+                     let .tabItem(name, iconName, action):
+                    Button {
+                        if case .tabItem = item {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedItem = selectedItem == item ? nil : item
+                            }
+                        }
+                        action()
+                    } label: {
                         Image(systemName: iconName)
-                            .foregroundColor(hoveringItem?.id == item.id ? .accentColor : .white)
                     }
                     .buttonStyle(ToolbarButtonStyle())
+                    .foregroundColor(hoveringItem == item ? .accentColor : .white)
+                    .background {
+                        if selectedItem == item {
+                            Color.secondary
+                                .cornerRadius(4)
+                                .opacity(0.5)
+                        }
+                    }
                     .help(name)
                     .onHover { isHovering in
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -52,12 +69,12 @@ struct ToolbarView_Previews: PreviewProvider {
         ])
 
         ToolbarView(items: [
-            .button(name: "Shape", iconName: "rectangle") {},
-            .button(name: "Arrow", iconName: "arrow.up.right") {},
-            .button(name: "Draw", iconName: "scribble") {},
-            .button(name: "Highlight", iconName: "highlighter") {},
-            .button(name: "Mosaic", iconName: "mosaic") {},
-            .button(name: "Text", iconName: "character") {},
+            .tabItem(name: "Shape", iconName: "rectangle") {},
+            .tabItem(name: "Arrow", iconName: "arrow.up.right") {},
+            .tabItem(name: "Draw", iconName: "scribble") {},
+            .tabItem(name: "Highlight", iconName: "highlighter") {},
+            .tabItem(name: "Mosaic", iconName: "mosaic") {},
+            .tabItem(name: "Text", iconName: "character") {},
             .divider,
             .button(name: "Undo", iconName: "arrow.uturn.backward") {},
             .button(name: "Redo", iconName: "arrow.uturn.forward") {},

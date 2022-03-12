@@ -43,12 +43,12 @@ class SnipImageWindowController: NSWindowController {
         window?.contentView = NSHostingView(rootView: SnipImageView().environmentObject(editor))
 
         let toolbarItems: [ToolbarItem] = [
-            .button(name: "Shape", iconName: "rectangle") {},
-            .button(name: "Arrow", iconName: "arrow.up.right") {},
-            .button(name: "Draw", iconName: "scribble") {},
-            .button(name: "Highlight", iconName: "highlighter") {},
-            .button(name: "Mosaic", iconName: "mosaic") {},
-            .button(name: "Text", iconName: "character") {},
+            .tabItem(name: "Shape", iconName: "rectangle") {},
+            .tabItem(name: "Arrow", iconName: "arrow.up.right") {},
+            .tabItem(name: "Draw", iconName: "scribble") {},
+            .tabItem(name: "Highlight", iconName: "highlighter") {},
+            .tabItem(name: "Mosaic", iconName: "mosaic") {},
+            .tabItem(name: "Text", iconName: "character") {},
             .divider,
             .button(name: "Undo", iconName: "arrow.uturn.backward") {},
             .button(name: "Redo", iconName: "arrow.uturn.forward") {},
