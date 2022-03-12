@@ -10,6 +10,8 @@ import SwiftUI
 struct ToolbarView: View {
     let items: [ToolbarItem]
 
+    @State private var hoveringItem: ToolbarItem? = nil
+
     var body: some View {
         HStack(spacing: 0) {
             ForEach(items) { item in
@@ -20,9 +22,15 @@ struct ToolbarView: View {
                 case let .button(name: name, iconName: iconName, action: action):
                     Button(action: action) {
                         Image(systemName: iconName)
+                            .foregroundColor(hoveringItem?.id == item.id ? .accentColor : .white)
                     }
                     .buttonStyle(ToolbarButtonStyle())
                     .help(name)
+                    .onHover { isHovering in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            self.hoveringItem = isHovering ? item : nil
+                        }
+                    }
                 }
             }
         }
