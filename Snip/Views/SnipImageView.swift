@@ -26,32 +26,36 @@ struct SnipImageView: View {
                     }
                 }
 
-            HStack {
-                VStack {
-                    Text("\(Int(editor.scale * 100))%")
-                        .font(.callout.monospaced())
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background {
-                            Color.black
-                                .opacity(0.6)
-                        }
-                        .opacity(scaleLabelAlpha)
-                        .onReceive(editor.$scale) { _ in
-                            scaleLabelAlpha = 0.8
-                            withAnimation(.easeInOut(duration: 0.4).delay(1.0)) {
-                                scaleLabelAlpha = 0
-                            }
-                        }
+            scaleLabel
+        }
+        .padding(20)
+    }
 
-                    Spacer()
-                }
+    private var scaleLabel: some View {
+        HStack(spacing: 0) {
+            VStack(spacing: 0) {
+                Text("\(Int(editor.scale * 100))%")
+                    .font(.callout.monospaced())
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background {
+                        Color.black
+                            .opacity(0.6)
+                    }
+                    .opacity(scaleLabelAlpha)
+                    .onReceive(editor.$scale) { _ in
+                        scaleLabelAlpha = 0.8
+                        withAnimation(.easeInOut(duration: 0.4).delay(1.0)) {
+                            scaleLabelAlpha = 0
+                        }
+                    }
 
                 Spacer()
             }
+
+            Spacer()
         }
-        .padding(20)
     }
 }
 

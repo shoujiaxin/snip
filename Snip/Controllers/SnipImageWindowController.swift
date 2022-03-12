@@ -21,10 +21,19 @@ class SnipImageWindowController: NSWindowController {
     private var scalingFrame: NSRect?
 
     /// The scale of the window when scaling.
-    private var scalingFactor: CGFloat = 1.0
+    private var scalingFactor: CGFloat = 1.0 {
+        didSet {
+            scalingFactor = min(scalingFactor, 5)
+            scalingFactor = max(scalingFactor, 0)
+        }
+    }
 
     /// The mouse location when scaling begins.
     private var scalingCenter: NSPoint = .zero
+
+    private var showToolbarAfterScaling: Bool = false
+
+    private var drawingGestureRecognizer: NSPanGestureRecognizer?
 
     // MARK: - Lifecycle
 
@@ -68,6 +77,7 @@ class SnipImageWindowController: NSWindowController {
         let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onDoubleClickGesture))
         doubleClickGestureRecognizer.numberOfClicksRequired = 2
         window?.contentView?.addGestureRecognizer(doubleClickGestureRecognizer)
+        window?.contentView?.addGestureRecognizer(NSMagnificationGestureRecognizer(target: self, action: #selector(onMagnificationGesture(gestureRecognizer:))))
 
         hideToolbar()
     }
@@ -90,17 +100,15 @@ class SnipImageWindowController: NSWindowController {
 
         switch event.phase {
         case .began:
-            scalingFrame = window?.frame
-            scalingFactor = 1.0
-            scalingCenter = NSEvent.mouseLocation
+            beginScaling()
         case .changed:
             var delta = event.scrollingDeltaY / 60
             delta = min(delta, 0.1)
             delta = max(delta, -0.1)
             scalingFactor += delta
-            scalingFactor = min(scalingFactor, 5)
-            scalingFactor = max(scalingFactor, 0)
             scaled(by: scalingFactor, at: scalingCenter)
+        case .ended:
+            endScaling()
         default:
             return
         }
@@ -124,6 +132,37 @@ class SnipImageWindowController: NSWindowController {
         window?.cancelOperation(self)
     }
 
+    @objc private func onMagnificationGesture(gestureRecognizer: NSMagnificationGestureRecognizer) {
+        switch gestureRecognizer.state {
+        case .began:
+            beginScaling()
+        case .changed:
+            scalingFactor = gestureRecognizer.magnification + 1.0
+            scaled(by: scalingFactor, at: scalingCenter)
+        case .ended:
+            endScaling()
+        default:
+            return
+        }
+    }
+
+    private func beginScaling() {
+        scalingFrame = window?.frame
+        scalingFactor = 1.0
+        scalingCenter = NSEvent.mouseLocation
+
+        showToolbarAfterScaling = toolbarWindow.isVisible
+        if toolbarWindow.isVisible {
+            hideToolbar()
+        }
+    }
+
+    private func endScaling() {
+        if showToolbarAfterScaling {
+            showToolbar()
+        }
+    }
+
     private func scaled(by scale: CGFloat, at location: NSPoint) {
         guard let frame = scalingFrame else {
             return
@@ -133,7 +172,7 @@ class SnipImageWindowController: NSWindowController {
             .scaledBy(x: scale, y: scale)
             .translatedBy(x: -location.x, y: -location.y)
         let scaledFrame = frame.applying(transform)
-        if scaledFrame.width < 50 || scaledFrame.height < 50 {
+        if scaledFrame.width < 60 || scaledFrame.height < 60 {
             return
         }
 
