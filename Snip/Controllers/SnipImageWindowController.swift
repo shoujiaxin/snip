@@ -42,7 +42,6 @@ class SnipImageWindowController: NSWindowController {
 
         super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -20, dy: -20), styleMask: .borderless, backing: .buffered, defer: false))
 
-        window?.aspectRatio = image.size
         window?.backgroundColor = .clear
         window?.delegate = self
         window?.isOpaque = false
@@ -147,7 +146,7 @@ class SnipImageWindowController: NSWindowController {
     }
 
     private func beginScaling() {
-        scalingFrame = window?.frame
+        scalingFrame = window?.frame.insetBy(dx: 20, dy: 20)
         scalingFactor = 1.0
         scalingCenter = NSEvent.mouseLocation
 
@@ -171,8 +170,8 @@ class SnipImageWindowController: NSWindowController {
         let transform = CGAffineTransform(translationX: location.x, y: location.y)
             .scaledBy(x: scale, y: scale)
             .translatedBy(x: -location.x, y: -location.y)
-        let scaledFrame = frame.applying(transform)
-        if scaledFrame.width < 60 || scaledFrame.height < 60 {
+        let scaledFrame = frame.applying(transform).insetBy(dx: -20, dy: -20)
+        if scaledFrame.width < 20 || scaledFrame.height < 20 {
             return
         }
 
