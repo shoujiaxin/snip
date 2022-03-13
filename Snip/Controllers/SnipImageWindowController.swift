@@ -42,14 +42,28 @@ class SnipImageWindowController: NSWindowController {
 
         super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -20, dy: -20), styleMask: .borderless, backing: .buffered, defer: false))
 
+        setupWindow()
+        setupToolbar()
+        setupGestureRecognizers()
+
+        hideToolbar()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupWindow() {
         window?.backgroundColor = .clear
+        window?.contentView = NSHostingView(rootView: SnipImageView().environmentObject(editor))
         window?.delegate = self
         window?.isOpaque = false
         window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
+    }
 
-        window?.contentView = NSHostingView(rootView: SnipImageView().environmentObject(editor))
-
+    private func setupToolbar() {
         let toolbarItems: [ToolbarItem] = [
             .tabItem(name: "Shape", iconName: "rectangle") {},
             .tabItem(name: "Arrow", iconName: "arrow.up.right") {},
@@ -72,18 +86,15 @@ class SnipImageWindowController: NSWindowController {
         toolbarWindow.isOpaque = false
         toolbarWindow.styleMask = .borderless
         toolbarWindow.setFrame(.init(origin: .zero, size: toolbar.intrinsicContentSize), display: false)
+    }
 
+    private func setupGestureRecognizers() {
         let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onDoubleClickGesture))
         doubleClickGestureRecognizer.numberOfClicksRequired = 2
         window?.contentView?.addGestureRecognizer(doubleClickGestureRecognizer)
-        window?.contentView?.addGestureRecognizer(NSMagnificationGestureRecognizer(target: self, action: #selector(onMagnificationGesture(gestureRecognizer:))))
 
-        hideToolbar()
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        let magnificationGestureRecognizer = NSMagnificationGestureRecognizer(target: self, action: #selector(onMagnificationGesture(gestureRecognizer:)))
+        window?.contentView?.addGestureRecognizer(magnificationGestureRecognizer)
     }
 
     // MARK: - Mouse & keyboard events

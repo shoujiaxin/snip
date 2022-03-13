@@ -8,15 +8,11 @@
 import SwiftUI
 
 struct SnipSizeLabel: View {
-    private let rect: NSRect
-
-    init(of rect: NSRect) {
-        self.rect = rect
-    }
+    let size: NSSize
 
     var body: some View {
         HStack(spacing: 0) {
-            Text("\(Int(rect.width)) ✕ \(Int(rect.height))")
+            Text("\(Int(size.width)) ✕ \(Int(size.height))")
                 .padding(textPadding)
 
             Divider()
@@ -42,6 +38,6 @@ struct SnipSizeLabel: View {
 
 struct SnipSizeLabel_Previews: PreviewProvider {
     static var previews: some View {
-        SnipSizeLabel(of: .zero)
+        SnipSizeLabel(size: .init(width: 100, height: 200))
     }
 }

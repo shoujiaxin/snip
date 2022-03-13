@@ -15,7 +15,7 @@ class SnipMaskWindowController: NSWindowController {
 
     private let resizingBox = ResizableView(frame: .zero)
 
-    private let sizeLabel = NSHostingView(rootView: SnipSizeLabel(of: .zero))
+    private let sizeLabel = NSHostingView(rootView: SnipSizeLabel(size: .zero))
 
     private var toolbar: NSHostingView<ToolbarView>!
 
@@ -47,19 +47,46 @@ class SnipMaskWindowController: NSWindowController {
 
         super.init(window: SnipWindow(contentRect: screen.frame, styleMask: .borderless, backing: .buffered, defer: false))
 
+        setupWindow()
+        setupMaskLayer()
+        setupResizingBox()
+        setupSizeLabel()
+        setupToolbar()
+        setupGestureRecognizers()
+        setupTrackingAreas()
+    }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupWindow() {
         window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
+    }
 
+    private func setupMaskLayer() {
         maskLayer.fillColor = CGColor(gray: 0.5, alpha: 0.5)
         maskLayer.fillRule = .evenOdd
         maskLayer.path = CGPath(rect: bounds, transform: nil)
         window?.contentView?.wantsLayer = true
         window?.contentView?.layer?.contents = screenshot
         window?.contentView?.layer?.addSublayer(maskLayer)
+    }
 
+    private func setupResizingBox() {
         resizingBox.isResizable = false
         resizingBox.delegate = self
+        window?.contentView?.addSubview(resizingBox)
+    }
+
+    private func setupSizeLabel() {
         sizeLabel.isHidden = true
+        window?.contentView?.addSubview(sizeLabel)
+    }
+
+    private func setupToolbar() {
         let toolbarItems: [ToolbarItem] = [
             .button(name: "Cancel", iconName: "xmark") { [weak self] in self?.onCancel() },
             .button(name: "Pin", iconName: "pin") { [weak self] in self?.onPin() },
@@ -68,14 +95,14 @@ class SnipMaskWindowController: NSWindowController {
         ]
         toolbar = NSHostingView(rootView: ToolbarView(items: toolbarItems))
         toolbar.isHidden = true
-
-        window?.contentView?.addSubview(resizingBox)
-        window?.contentView?.addSubview(sizeLabel)
         window?.contentView?.addSubview(toolbar)
+    }
 
+    private func setupGestureRecognizers() {
         let panGestureRecognizer = NSPanGestureRecognizer(target: self, action: #selector(onPanGesture(gestureRecognizer:)))
         panGestureRecognizer.delegate = self
         window?.contentView?.addGestureRecognizer(panGestureRecognizer)
+
         let doubleClickGestureRecognizer = NSClickGestureRecognizer(target: SnipManager.shared, action: #selector(SnipManager.finishCapture))
         doubleClickGestureRecognizer.numberOfClicksRequired = 2
         window?.contentView?.addGestureRecognizer(doubleClickGestureRecognizer)
@@ -83,13 +110,10 @@ class SnipMaskWindowController: NSWindowController {
         let clickGestureRecognizer = NSClickGestureRecognizer(target: self, action: #selector(onClickGesture(gestureRecognizer:)))
         clickGestureRecognizer.numberOfClicksRequired = 1
         resizingBox.addGestureRecognizer(clickGestureRecognizer)
-
-        window?.contentView?.addTrackingArea(.init(rect: bounds, options: [.activeInActiveApp, .mouseEnteredAndExited, .mouseMoved], owner: self, userInfo: nil))
     }
 
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private func setupTrackingAreas() {
+        window?.contentView?.addTrackingArea(.init(rect: bounds, options: [.activeInActiveApp, .mouseEnteredAndExited, .mouseMoved], owner: self, userInfo: nil))
     }
 
     // MARK: - Mouse & keyboard events
@@ -185,7 +209,7 @@ extension SnipMaskWindowController: ResizableViewDelegate {
         maskLayer.path = path
 
         // Update size label
-        sizeLabel.rootView = SnipSizeLabel(of: rect)
+        sizeLabel.rootView = SnipSizeLabel(size: rect.size)
         var labelFrame = NSRect(origin: NSPoint(x: rect.minX, y: view.frame.maxY), size: sizeLabel.intrinsicContentSize)
         if labelFrame.maxY > bounds.maxY {
             labelFrame.origin.x = view.frame.minX - labelFrame.width
