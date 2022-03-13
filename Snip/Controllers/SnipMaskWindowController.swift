@@ -209,7 +209,7 @@ extension SnipMaskWindowController: ResizableViewDelegate {
         maskLayer.path = path
 
         // Update size label
-        sizeLabel.rootView = SnipSizeLabel(size: rect.size)
+        sizeLabel.rootView.size = rect.size
         var labelFrame = NSRect(origin: NSPoint(x: rect.minX, y: view.frame.maxY), size: sizeLabel.intrinsicContentSize)
         if labelFrame.maxY > bounds.maxY {
             labelFrame.origin.x = view.frame.minX - labelFrame.width

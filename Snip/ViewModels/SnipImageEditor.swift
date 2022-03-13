@@ -8,18 +8,9 @@
 import SwiftUI
 
 class SnipImageEditor: ObservableObject {
-    let image: NSImage
-
-    @Published var isFocused: Bool = true
-
-    /// The scale factor of the image.
-    @Published private(set) var scale: Double = 1.0
+    private(set) var image: NSImage
 
     init(_ image: NSImage) {
         self.image = image
-    }
-
-    func imageScaled(_ frame: NSRect) {
-        scale = frame.width / image.size.width
     }
 }

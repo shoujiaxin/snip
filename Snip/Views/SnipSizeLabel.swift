@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SnipSizeLabel: View {
-    let size: NSSize
+    var size: NSSize
 
     var body: some View {
         HStack(spacing: 0) {

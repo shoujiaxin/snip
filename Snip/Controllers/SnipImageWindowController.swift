@@ -11,16 +11,23 @@ import SwiftUI
 class SnipImageWindowController: NSWindowController {
     // MARK: - Views
 
+    private let imageCanvas: NSHostingView<ImageCanvas>
+
+    private let scaleLabel = NSHostingView(rootView: ScaleLabel(scale: 1.0))
+
     private let toolbarWindow = NSWindow()
 
     // MARK: - States
 
+    /// Original size of the image.
+    private let imageSize: NSSize
+
     private let editor: SnipImageEditor
 
-    /// The window's frame when scaling.
+    /// The frame of the image canvas when scaling.
     private var scalingFrame: NSRect?
 
-    /// The scale of the window when scaling.
+    /// The scale of the image canvas when scaling.
     private var scalingFactor: CGFloat = 1.0 {
         didSet {
             scalingFactor = min(scalingFactor, 5)
@@ -33,16 +40,26 @@ class SnipImageWindowController: NSWindowController {
 
     private var showToolbarAfterScaling: Bool = false
 
-    private var drawingGestureRecognizer: NSPanGestureRecognizer?
+    private var minScaledSize: CGFloat {
+        min(imageSize.width, imageSize.height, 40) + 2 * Self.contentInset
+    }
+
+    // MARK: - Constants
+
+    private static let contentInset: CGFloat = 20
 
     // MARK: - Lifecycle
 
     init(image: NSImage, location: NSPoint) {
+        imageSize = image.size
         editor = SnipImageEditor(image)
+        imageCanvas = .init(rootView: ImageCanvas(editor: editor))
 
-        super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -20, dy: -20), styleMask: .borderless, backing: .buffered, defer: false))
+        super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -Self.contentInset, dy: -Self.contentInset), styleMask: .borderless, backing: .buffered, defer: false))
 
         setupWindow()
+        setupImageCanvas()
+        setupScaleLabel()
         setupToolbar()
         setupGestureRecognizers()
 
@@ -56,11 +73,50 @@ class SnipImageWindowController: NSWindowController {
 
     private func setupWindow() {
         window?.backgroundColor = .clear
-        window?.contentView = NSHostingView(rootView: SnipImageView().environmentObject(editor))
         window?.delegate = self
         window?.isOpaque = false
         window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
+    }
+
+    private func setupImageCanvas() {
+        guard let contentView = window?.contentView else {
+            return
+        }
+        imageCanvas.shadow = .init()
+        imageCanvas.wantsLayer = true
+        imageCanvas.layer?.borderColor = NSColor.controlAccentColor.cgColor.copy(alpha: 0.6)
+        imageCanvas.layer?.shadowColor = NSColor.controlAccentColor.cgColor
+        imageCanvas.layer?.shadowOpacity = 0.8
+        imageCanvas.layer?.shadowRadius = 6
+        imageCanvas.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(imageCanvas)
+        let top = imageCanvas.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Self.contentInset)
+        let right = imageCanvas.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -Self.contentInset)
+        let bottom = imageCanvas.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Self.contentInset)
+        let left = imageCanvas.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: Self.contentInset)
+        contentView.addConstraints([top, right, bottom, left])
+
+        NSAnimationContext.runAnimationGroup { _ in
+            let key = "borderWidth"
+            let animation = CABasicAnimation(keyPath: key)
+            animation.duration = 0.2
+            animation.repeatCount = 2
+            animation.fromValue = 2
+            animation.toValue = 0
+            imageCanvas.layer?.add(animation, forKey: key)
+        }
+    }
+
+    private func setupScaleLabel() {
+        guard let contentView = window?.contentView else {
+            return
+        }
+        scaleLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(scaleLabel)
+        let top = scaleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Self.contentInset)
+        let left = scaleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: Self.contentInset)
+        contentView.addConstraints([top, left])
     }
 
     private func setupToolbar() {
@@ -157,7 +213,7 @@ class SnipImageWindowController: NSWindowController {
     }
 
     private func beginScaling() {
-        scalingFrame = window?.frame.insetBy(dx: 20, dy: 20)
+        scalingFrame = window?.frame.insetBy(dx: Self.contentInset, dy: Self.contentInset)
         scalingFactor = 1.0
         scalingCenter = NSEvent.mouseLocation
 
@@ -181,13 +237,13 @@ class SnipImageWindowController: NSWindowController {
         let transform = CGAffineTransform(translationX: location.x, y: location.y)
             .scaledBy(x: scale, y: scale)
             .translatedBy(x: -location.x, y: -location.y)
-        let scaledFrame = frame.applying(transform).insetBy(dx: -20, dy: -20)
-        if scaledFrame.width < 20 || scaledFrame.height < 20 {
+        let scaledFrame = frame.applying(transform).insetBy(dx: -Self.contentInset, dy: -Self.contentInset)
+        if scaledFrame.width < minScaledSize || scaledFrame.height < minScaledSize {
             return
         }
 
         window?.setFrame(scaledFrame, display: true)
-        editor.imageScaled(scaledFrame)
+        scaleLabel.rootView.scale = scaledFrame.width / imageSize.width
     }
 
     private func hideToolbar() {
@@ -200,7 +256,8 @@ class SnipImageWindowController: NSWindowController {
             return
         }
 
-        let origin = NSPoint(x: frame.maxX - toolbarWindow.frame.width - 20, y: frame.minY - toolbarWindow.frame.height + 10)
+        let origin = NSPoint(x: frame.maxX - toolbarWindow.frame.width - Self.contentInset,
+                             y: frame.minY - toolbarWindow.frame.height + Self.contentInset / 2)
         let size = toolbarWindow.frame.size
         toolbarWindow.setFrame(.init(origin: origin, size: size), display: true)
         toolbarWindow.setIsVisible(true)
@@ -212,11 +269,11 @@ class SnipImageWindowController: NSWindowController {
 
 extension SnipImageWindowController: NSWindowDelegate {
     func windowDidBecomeKey(_: Notification) {
-        editor.isFocused = true
+        imageCanvas.layer?.shadowColor = NSColor.controlAccentColor.cgColor
     }
 
     func windowDidResignKey(_: Notification) {
-        editor.isFocused = false
+        imageCanvas.layer?.shadowColor = NSColor.gray.cgColor
     }
 }
 
