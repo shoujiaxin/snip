@@ -115,7 +115,8 @@
 				295AE6AC2753758100A0185C /* SnipManager.swift */,
 				29FB8C332763A5FB00174A11 /* Models */,
 				2998FBB927566AC0007CBAC0 /* Views */,
-				2998FBB827566AB1007CBAC0 /* Controllers */,
+				2998FBB827566AB1007CBAC0 /* WindowControllers */,
+				29B5564127F09D76001CF1F6 /* ViewControllers */,
 				296E01B927D8F91400F0F09B /* ViewModels */,
 				296E01B627D8E58C00F0F09B /* Preview Content */,
 				295AE68627526FD600A0185C /* Main.storyboard */,
@@ -151,13 +152,13 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		2998FBB827566AB1007CBAC0 /* Controllers */ = {
+		2998FBB827566AB1007CBAC0 /* WindowControllers */ = {
 			isa = PBXGroup;
 			children = (
 				295AE6B42753C41800A0185C /* SnipMaskWindowController.swift */,
 				6BE58E262758F30D0073CBAE /* SnipImageWindowController.swift */,
 			);
-			path = Controllers;
+			path = WindowControllers;
 			sourceTree = "<group>";
 		};
 		2998FBB927566AC0007CBAC0 /* Views */ = {
@@ -172,6 +173,13 @@
 				296F527627DE5A0B0093DA08 /* ScaleLabel.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		29B5564127F09D76001CF1F6 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		29FB8C332763A5FB00174A11 /* Models */ = {
