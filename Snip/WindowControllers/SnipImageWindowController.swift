@@ -11,7 +11,7 @@ import SwiftUI
 class SnipImageWindowController: NSWindowController {
     // MARK: - Views
 
-    private let imageCanvas: NSHostingView<ImageCanvas>
+    private let imageCanvasViewController: ImageCanvasViewController
 
     private let scaleLabel = NSHostingView(rootView: ScaleLabel(scale: 1.0))
 
@@ -20,9 +20,7 @@ class SnipImageWindowController: NSWindowController {
     // MARK: - States
 
     /// Original size of the image.
-    private let imageSize: NSSize
-
-    private let editor: SnipImageEditor
+    private let originalSize: NSSize
 
     /// The frame of the image canvas when scaling.
     private var scalingFrame: NSRect?
@@ -41,7 +39,7 @@ class SnipImageWindowController: NSWindowController {
     private var showToolbarAfterScaling: Bool = false
 
     private var minScaledSize: CGFloat {
-        min(imageSize.width, imageSize.height, 40) + 2 * Self.contentInset
+        0.1 * min(originalSize.width, originalSize.height)
     }
 
     // MARK: - Constants
@@ -51,9 +49,8 @@ class SnipImageWindowController: NSWindowController {
     // MARK: - Lifecycle
 
     init(image: NSImage, location: NSPoint) {
-        imageSize = image.size
-        editor = SnipImageEditor(image)
-        imageCanvas = .init(rootView: ImageCanvas(editor: editor))
+        imageCanvasViewController = .init(image: image)
+        originalSize = image.size
 
         super.init(window: SnipWindow(contentRect: .init(origin: location, size: image.size).insetBy(dx: -Self.contentInset, dy: -Self.contentInset), styleMask: .borderless, backing: .buffered, defer: false))
 
@@ -74,6 +71,7 @@ class SnipImageWindowController: NSWindowController {
     private func setupWindow() {
         window?.backgroundColor = .clear
         window?.delegate = self
+        window?.hasShadow = false
         window?.isOpaque = false
         window?.level = .init(Int(CGWindowLevel.max))
         window?.makeMain()
@@ -83,8 +81,8 @@ class SnipImageWindowController: NSWindowController {
         guard let contentView = window?.contentView else {
             return
         }
+        let imageCanvas = imageCanvasViewController.view
         imageCanvas.shadow = .init()
-        imageCanvas.wantsLayer = true
         imageCanvas.layer?.borderColor = NSColor.controlAccentColor.cgColor.copy(alpha: 0.6)
         imageCanvas.layer?.shadowColor = NSColor.controlAccentColor.cgColor
         imageCanvas.layer?.shadowOpacity = 0.8
@@ -131,9 +129,9 @@ class SnipImageWindowController: NSWindowController {
             .button(name: "Undo", iconName: "arrow.uturn.backward") {},
             .button(name: "Redo", iconName: "arrow.uturn.forward") {},
             .divider,
-            .button(name: "Save", iconName: "square.and.arrow.down") { [weak self] in self?.onSave() },
-            .button(name: "Copy", iconName: "doc.on.doc") { [weak self] in self?.onCopy() },
-            .button(name: "Done", iconName: "checkmark") { [weak self] in self?.onDone() },
+            .button(name: "Save", iconName: "square.and.arrow.down") { [weak self] in self?.imageCanvasViewController.save() },
+            .button(name: "Copy", iconName: "doc.on.doc") { [weak self] in self?.imageCanvasViewController.copy() },
+            .button(name: "Done", iconName: "checkmark") { [weak self] in self?.hideToolbar() },
         ]
         let toolbar = NSHostingView(rootView: ToolbarView(items: toolbarItems))
         toolbarWindow.animationBehavior = .utilityWindow
@@ -237,13 +235,13 @@ class SnipImageWindowController: NSWindowController {
         let transform = CGAffineTransform(translationX: location.x, y: location.y)
             .scaledBy(x: scale, y: scale)
             .translatedBy(x: -location.x, y: -location.y)
-        let scaledFrame = frame.applying(transform).insetBy(dx: -Self.contentInset, dy: -Self.contentInset)
-        if scaledFrame.width < minScaledSize || scaledFrame.height < minScaledSize {
+        let scaledFrame = frame.applying(transform)
+        if scaledFrame.width <= minScaledSize || scaledFrame.height <= minScaledSize {
             return
         }
 
-        window?.setFrame(scaledFrame, display: true)
-        scaleLabel.rootView.scale = scaledFrame.width / imageSize.width
+        window?.setFrame(scaledFrame.insetBy(dx: -Self.contentInset, dy: -Self.contentInset), display: true)
+        scaleLabel.rootView.scale = scaledFrame.width / originalSize.width
     }
 
     private func hideToolbar() {
@@ -269,26 +267,10 @@ class SnipImageWindowController: NSWindowController {
 
 extension SnipImageWindowController: NSWindowDelegate {
     func windowDidBecomeKey(_: Notification) {
-        imageCanvas.layer?.shadowColor = NSColor.controlAccentColor.cgColor
+        imageCanvasViewController.view.layer?.shadowColor = NSColor.controlAccentColor.cgColor
     }
 
     func windowDidResignKey(_: Notification) {
-        imageCanvas.layer?.shadowColor = NSColor.gray.cgColor
-    }
-}
-
-// MARK: - Edit toolbar actions
-
-private extension SnipImageWindowController {
-    func onSave() {
-        // TODO: Save
-    }
-
-    func onCopy() {
-        // TODO: Copy
-    }
-
-    func onDone() {
-        hideToolbar()
+        imageCanvasViewController.view.layer?.shadowColor = NSColor.gray.cgColor
     }
 }
