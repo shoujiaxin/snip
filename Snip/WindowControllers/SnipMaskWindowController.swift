@@ -17,7 +17,7 @@ class SnipMaskWindowController: NSWindowController {
 
     private let sizeLabel = NSHostingView(rootView: SnipSizeLabel(size: .zero))
 
-    private var toolbar: NSHostingView<ToolbarView>!
+    private var toolbar: NSHostingView<SnipToolbar>!
 
     // MARK: - States
 
@@ -87,13 +87,13 @@ class SnipMaskWindowController: NSWindowController {
     }
 
     private func setupToolbar() {
-        let toolbarItems: [ToolbarItem] = [
+        let controller = SnipToolbarController(items: [
             .button(name: "Cancel", iconName: "xmark") { [weak self] in self?.onCancel() },
             .button(name: "Pin", iconName: "pin") { [weak self] in self?.onPin() },
             .button(name: "Save", iconName: "square.and.arrow.down") { [weak self] in self?.onSave() },
             .button(name: "Copy", iconName: "doc.on.doc") { [weak self] in self?.onCopy() },
-        ]
-        toolbar = NSHostingView(rootView: ToolbarView(items: toolbarItems))
+        ])
+        toolbar = NSHostingView(rootView: SnipToolbar(controller: controller))
         toolbar.isHidden = true
         window?.contentView?.addSubview(toolbar)
     }

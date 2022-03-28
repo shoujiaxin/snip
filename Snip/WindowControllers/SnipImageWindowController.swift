@@ -118,7 +118,7 @@ class SnipImageWindowController: NSWindowController {
     }
 
     private func setupToolbar() {
-        let toolbarItems: [ToolbarItem] = [
+        let controller = SnipToolbarController(items: [
             .tabItem(name: "Shape", iconName: "rectangle") {},
             .tabItem(name: "Arrow", iconName: "arrow.up.right") {},
             .tabItem(name: "Draw", iconName: "scribble") {},
@@ -132,8 +132,8 @@ class SnipImageWindowController: NSWindowController {
             .button(name: "Save", iconName: "square.and.arrow.down") { [weak self] in self?.imageCanvasViewController.save() },
             .button(name: "Copy", iconName: "doc.on.doc") { [weak self] in self?.imageCanvasViewController.copy() },
             .button(name: "Done", iconName: "checkmark") { [weak self] in self?.hideToolbar() },
-        ]
-        let toolbar = NSHostingView(rootView: ToolbarView(items: toolbarItems))
+        ])
+        let toolbar = NSHostingView(rootView: SnipToolbar(controller: controller))
         toolbarWindow.animationBehavior = .utilityWindow
         toolbarWindow.backgroundColor = .clear
         toolbarWindow.contentView = toolbar

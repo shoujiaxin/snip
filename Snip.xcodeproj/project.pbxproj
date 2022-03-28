@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2903AB8927DBB48E0061887B /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2903AB8827DBB48E0061887B /* ToolbarView.swift */; };
+		2903AB8927DBB48E0061887B /* SnipToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2903AB8827DBB48E0061887B /* SnipToolbar.swift */; };
 		295AE67E27526FD500A0185C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE67D27526FD500A0185C /* AppDelegate.swift */; };
 		295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 295AE68127526FD500A0185C /* Snip.xcdatamodeld */; };
 		295AE68527526FD600A0185C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 295AE68427526FD600A0185C /* Assets.xcassets */; };
@@ -20,10 +20,11 @@
 		296E01BB27D8F94C00F0F09B /* SnipImageEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296E01BA27D8F94C00F0F09B /* SnipImageEditor.swift */; };
 		296F527727DE5A0B0093DA08 /* ScaleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296F527627DE5A0B0093DA08 /* ScaleLabel.swift */; };
 		296F527927DE5EE60093DA08 /* ImageCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296F527827DE5EE60093DA08 /* ImageCanvas.swift */; };
-		2975A1BA27DBAA290012C6D8 /* ToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2975A1B927DBAA290012C6D8 /* ToolbarItem.swift */; };
+		2975A1BA27DBAA290012C6D8 /* SnipToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2975A1B927DBAA290012C6D8 /* SnipToolbarItem.swift */; };
 		2998FBBD2756766E007CBAC0 /* SnipSizeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */; };
 		2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBE275688CE007CBAC0 /* SnipWindow.swift */; };
 		29B5564327F09F7E001CF1F6 /* ImageCanvasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B5564227F09F7E001CF1F6 /* ImageCanvasViewController.swift */; };
+		29D09C0327F210D600DFB708 /* SnipToolbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29D09C0227F210D600DFB708 /* SnipToolbarController.swift */; };
 		29FB8C352763A62000174A11 /* WindowInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FB8C342763A62000174A11 /* WindowInfo.swift */; };
 		6B23BB8C27C3B34200D92A4A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B23BB8B27C3B34200D92A4A /* Constants.swift */; };
 		6B6D374F275A439B009CB9E3 /* ToolbarButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6D374E275A439B009CB9E3 /* ToolbarButtonStyle.swift */; };
@@ -43,7 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2903AB8827DBB48E0061887B /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
+		2903AB8827DBB48E0061887B /* SnipToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipToolbar.swift; sourceTree = "<group>"; };
 		295AE67A27526FD500A0185C /* Snip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Snip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		295AE67D27526FD500A0185C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		295AE68227526FD500A0185C /* Snip.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Snip.xcdatamodel; sourceTree = "<group>"; };
@@ -60,10 +61,11 @@
 		296E01BA27D8F94C00F0F09B /* SnipImageEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipImageEditor.swift; sourceTree = "<group>"; };
 		296F527627DE5A0B0093DA08 /* ScaleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleLabel.swift; sourceTree = "<group>"; };
 		296F527827DE5EE60093DA08 /* ImageCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCanvas.swift; sourceTree = "<group>"; };
-		2975A1B927DBAA290012C6D8 /* ToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarItem.swift; sourceTree = "<group>"; };
+		2975A1B927DBAA290012C6D8 /* SnipToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipToolbarItem.swift; sourceTree = "<group>"; };
 		2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipSizeLabel.swift; sourceTree = "<group>"; };
 		2998FBBE275688CE007CBAC0 /* SnipWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindow.swift; sourceTree = "<group>"; };
 		29B5564227F09F7E001CF1F6 /* ImageCanvasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCanvasViewController.swift; sourceTree = "<group>"; };
+		29D09C0227F210D600DFB708 /* SnipToolbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipToolbarController.swift; sourceTree = "<group>"; };
 		29FB8C342763A62000174A11 /* WindowInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowInfo.swift; sourceTree = "<group>"; };
 		6B23BB8B27C3B34200D92A4A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		6B6D374E275A439B009CB9E3 /* ToolbarButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButtonStyle.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				296E01BA27D8F94C00F0F09B /* SnipImageEditor.swift */,
+				29D09C0227F210D600DFB708 /* SnipToolbarController.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -170,7 +173,7 @@
 				2998FBBE275688CE007CBAC0 /* SnipWindow.swift */,
 				296B863827C3E639003BD7E0 /* ResizableView.swift */,
 				2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */,
-				2903AB8827DBB48E0061887B /* ToolbarView.swift */,
+				2903AB8827DBB48E0061887B /* SnipToolbar.swift */,
 				296F527827DE5EE60093DA08 /* ImageCanvas.swift */,
 				296F527627DE5A0B0093DA08 /* ScaleLabel.swift */,
 			);
@@ -189,7 +192,7 @@
 			isa = PBXGroup;
 			children = (
 				29FB8C342763A62000174A11 /* WindowInfo.swift */,
-				2975A1B927DBAA290012C6D8 /* ToolbarItem.swift */,
+				2975A1B927DBAA290012C6D8 /* SnipToolbarItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -309,8 +312,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				29D09C0327F210D600DFB708 /* SnipToolbarController.swift in Sources */,
 				6BE58E1F2757775F0073CBAE /* Extensions.swift in Sources */,
-				2903AB8927DBB48E0061887B /* ToolbarView.swift in Sources */,
+				2903AB8927DBB48E0061887B /* SnipToolbar.swift in Sources */,
 				295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */,
 				6B6D374F275A439B009CB9E3 /* ToolbarButtonStyle.swift in Sources */,
 				296E01BB27D8F94C00F0F09B /* SnipImageEditor.swift in Sources */,
@@ -323,7 +327,7 @@
 				295AE67E27526FD500A0185C /* AppDelegate.swift in Sources */,
 				2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */,
 				2998FBBD2756766E007CBAC0 /* SnipSizeLabel.swift in Sources */,
-				2975A1BA27DBAA290012C6D8 /* ToolbarItem.swift in Sources */,
+				2975A1BA27DBAA290012C6D8 /* SnipToolbarItem.swift in Sources */,
 				29FB8C352763A62000174A11 /* WindowInfo.swift in Sources */,
 				6BE58E272758F30D0073CBAE /* SnipImageWindowController.swift in Sources */,
 				296F527927DE5EE60093DA08 /* ImageCanvas.swift in Sources */,
