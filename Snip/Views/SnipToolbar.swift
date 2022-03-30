@@ -41,14 +41,12 @@ struct SnipToolbar: View {
                     self.hoveringItem = isHovering ? item : nil
                 }
             }
-        case let .tabItem(name, iconName, onSelect, onDeselect):
+        case let .tabItem(name, iconName, _, _):
             Button {
                 if controller.selectedItem == item {
                     controller.selectedItem = nil
-                    onDeselect()
                 } else {
                     controller.selectedItem = item
-                    onSelect()
                 }
             } label: {
                 Image(systemName: iconName)

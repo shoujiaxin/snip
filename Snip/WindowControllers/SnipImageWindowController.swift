@@ -17,6 +17,8 @@ class SnipImageWindowController: NSWindowController {
 
     private let toolbarWindow = NSWindow()
 
+    private var toolbarController: SnipToolbarController!
+
     // MARK: - States
 
     /// Original size of the image.
@@ -35,8 +37,6 @@ class SnipImageWindowController: NSWindowController {
 
     /// The mouse location when scaling begins.
     private var scalingCenter: NSPoint = .zero
-
-    private var showToolbarAfterScaling: Bool = false
 
     private var minScaledSize: CGFloat {
         0.1 * min(originalSize.width, originalSize.height)
@@ -118,8 +118,12 @@ class SnipImageWindowController: NSWindowController {
     }
 
     private func setupToolbar() {
-        let controller = SnipToolbarController(items: [
-            .tabItem(name: "Shape", iconName: "rectangle") {},
+        toolbarController = SnipToolbarController(items: [
+            .tabItem(name: "Shape", iconName: "rectangle") { [weak self] in
+                self?.imageCanvasViewController.markupState = .rectangle
+            } onDeselect: { [weak self] in
+                self?.imageCanvasViewController.markupState = .none
+            },
             .tabItem(name: "Arrow", iconName: "arrow.up.right") {},
             .tabItem(name: "Draw", iconName: "scribble") {},
             .tabItem(name: "Highlight", iconName: "highlighter") {},
@@ -129,11 +133,18 @@ class SnipImageWindowController: NSWindowController {
             .button(name: "Undo", iconName: "arrow.uturn.backward") {},
             .button(name: "Redo", iconName: "arrow.uturn.forward") {},
             .divider,
-            .button(name: "Save", iconName: "square.and.arrow.down") { [weak self] in self?.imageCanvasViewController.save() },
-            .button(name: "Copy", iconName: "doc.on.doc") { [weak self] in self?.imageCanvasViewController.copy() },
-            .button(name: "Done", iconName: "checkmark") { [weak self] in self?.hideToolbar() },
+            .button(name: "Save", iconName: "square.and.arrow.down") { [weak self] in
+                self?.imageCanvasViewController.save()
+            },
+            .button(name: "Copy", iconName: "doc.on.doc") { [weak self] in
+                self?.imageCanvasViewController.copy()
+            },
+            .button(name: "Done", iconName: "checkmark") { [weak self] in
+                self?.toolbarController.selectedItem = nil
+                self?.hideToolbar()
+            },
         ])
-        let toolbar = NSHostingView(rootView: SnipToolbar(controller: controller))
+        let toolbar = NSHostingView(rootView: SnipToolbar(controller: toolbarController))
         toolbarWindow.animationBehavior = .utilityWindow
         toolbarWindow.backgroundColor = .clear
         toolbarWindow.contentView = toolbar
@@ -171,8 +182,6 @@ class SnipImageWindowController: NSWindowController {
             delta = max(delta, -0.1)
             scalingFactor += delta
             scaled(by: scalingFactor, at: scalingCenter)
-        case .ended:
-            endScaling()
         default:
             return
         }
@@ -189,6 +198,14 @@ class SnipImageWindowController: NSWindowController {
     }
 
     override func cancelOperation(_: Any?) {
+        guard toolbarController.selectedItem == nil else {
+            toolbarController.selectedItem = nil
+            return
+        }
+        guard !toolbarWindow.isVisible else {
+            hideToolbar()
+            return
+        }
         SnipManager.shared.removeScreenshot(self)
     }
 
@@ -203,8 +220,6 @@ class SnipImageWindowController: NSWindowController {
         case .changed:
             scalingFactor = gestureRecognizer.magnification + 1.0
             scaled(by: scalingFactor, at: scalingCenter)
-        case .ended:
-            endScaling()
         default:
             return
         }
@@ -214,21 +229,10 @@ class SnipImageWindowController: NSWindowController {
         scalingFrame = window?.frame.insetBy(dx: Self.contentInset, dy: Self.contentInset)
         scalingFactor = 1.0
         scalingCenter = NSEvent.mouseLocation
-
-        showToolbarAfterScaling = toolbarWindow.isVisible
-        if toolbarWindow.isVisible {
-            hideToolbar()
-        }
-    }
-
-    private func endScaling() {
-        if showToolbarAfterScaling {
-            showToolbar()
-        }
     }
 
     private func scaled(by scale: CGFloat, at location: NSPoint) {
-        guard let frame = scalingFrame else {
+        guard toolbarController.selectedItem == nil, let frame = scalingFrame else {
             return
         }
 
@@ -242,6 +246,8 @@ class SnipImageWindowController: NSWindowController {
 
         window?.setFrame(scaledFrame.insetBy(dx: -Self.contentInset, dy: -Self.contentInset), display: true)
         scaleLabel.rootView.scale = scaledFrame.width / originalSize.width
+
+        updateToolbarFrame()
     }
 
     private func hideToolbar() {
@@ -250,7 +256,14 @@ class SnipImageWindowController: NSWindowController {
     }
 
     private func showToolbar() {
-        guard let frame = window?.frame else {
+        toolbarWindow.setIsVisible(true)
+        window?.addChildWindow(toolbarWindow, ordered: .above)
+
+        updateToolbarFrame()
+    }
+
+    private func updateToolbarFrame() {
+        guard toolbarWindow.isVisible, let frame = window?.frame else {
             return
         }
 
@@ -258,8 +271,6 @@ class SnipImageWindowController: NSWindowController {
                              y: frame.minY - toolbarWindow.frame.height + Self.contentInset / 2)
         let size = toolbarWindow.frame.size
         toolbarWindow.setFrame(.init(origin: origin, size: size), display: true)
-        toolbarWindow.setIsVisible(true)
-        window?.addChildWindow(toolbarWindow, ordered: .above)
     }
 }
 
