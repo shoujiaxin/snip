@@ -48,6 +48,25 @@ class ResizableView: NSView {
     /// The width of the resizing handle's border.
     var handleBorderWidth: CGFloat = NSBezierPath.defaultLineWidth
 
+    /// The content of the resizable view.
+    var content: NSView? {
+        get {
+            subviews.first
+        }
+        set {
+            guard let view = newValue else {
+                return
+            }
+            view.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(view)
+            let top = view.topAnchor.constraint(equalTo: topAnchor, constant: borderInset)
+            let right = view.rightAnchor.constraint(equalTo: rightAnchor, constant: -borderInset)
+            let bottom = view.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -borderInset)
+            let left = view.leftAnchor.constraint(equalTo: leftAnchor, constant: borderInset)
+            addConstraints([top, right, bottom, left])
+        }
+    }
+
     /// Frame of the content in the parent view's coordinate system.
     var contentFrame: NSRect {
         get {
@@ -96,10 +115,12 @@ class ResizableView: NSView {
         let rect = dirtyRect.insetBy(dx: inset, dy: inset)
 
         // Draw border
-        let border = NSBezierPath(rect: rect)
-        borderColor.setStroke()
-        border.lineWidth = borderWidth
-        border.stroke()
+        if borderWidth > 0 {
+            let border = NSBezierPath(rect: rect)
+            borderColor.setStroke()
+            border.lineWidth = borderWidth
+            border.stroke()
+        }
 
         // Update tracking areas
         trackingAreas.forEach { removeTrackingArea($0) }
