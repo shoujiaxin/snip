@@ -90,7 +90,8 @@ class ImageCanvasViewController: NSViewController {
             let startPoint = NSPoint(x: location.x - translation.x, y: location.y - translation.y)
             switch markupState {
             case .rectangle:
-                markupView.contentFrame = .init(origin: startPoint, size: .init(width: translation.x, height: translation.y))
+                let rect = NSRect(origin: startPoint, size: .init(width: translation.x, height: translation.y))
+                markupView.contentFrame = NSEvent.modifierFlags == .shift ? rect.square() : rect
             default:
                 return
             }

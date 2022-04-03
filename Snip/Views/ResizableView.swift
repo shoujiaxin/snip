@@ -206,28 +206,61 @@ class ResizableView: NSView {
             resizingFrame = contentFrame
             delegate?.resizableView(self, contentFrameWillBeginChanging: contentFrame)
         case .changed:
-            let translation = gestureRecognizer.translation(in: self)
+            var translation = gestureRecognizer.translation(in: self)
+            let isHoldingShift = NSEvent.modifierFlags == .shift
             switch resizingState {
             case .none:
                 return
             case .upLeft:
                 contentFrame = .init(x: resizingFrame.origin.x + translation.x, y: resizingFrame.origin.y, width: resizingFrame.width - translation.x, height: resizingFrame.height + translation.y)
+                if isHoldingShift {
+                    contentFrame.size.height = contentFrame.width
+                }
             case .upRight:
                 contentFrame = .init(x: resizingFrame.origin.x, y: resizingFrame.origin.y, width: resizingFrame.width + translation.x, height: resizingFrame.height + translation.y)
+                if isHoldingShift {
+                    contentFrame.size.height = contentFrame.width
+                }
             case .downRight:
                 contentFrame = .init(x: resizingFrame.origin.x, y: resizingFrame.origin.y + translation.y, width: resizingFrame.width + translation.x, height: resizingFrame.height - translation.y)
+                if isHoldingShift {
+                    contentFrame.size.width = contentFrame.height
+                }
             case .downLeft:
                 contentFrame = .init(x: resizingFrame.origin.x + translation.x, y: resizingFrame.origin.y + translation.y, width: resizingFrame.width - translation.x, height: resizingFrame.height - translation.y)
+                if isHoldingShift {
+                    contentFrame.size.width = contentFrame.height
+                }
             case .up:
                 contentFrame = .init(x: resizingFrame.origin.x, y: resizingFrame.origin.y, width: resizingFrame.width, height: resizingFrame.height + translation.y)
+                if isHoldingShift {
+                    contentFrame.size.width = contentFrame.height
+                }
             case .right:
                 contentFrame = .init(x: resizingFrame.origin.x, y: resizingFrame.origin.y, width: resizingFrame.width + translation.x, height: resizingFrame.height)
+                if isHoldingShift {
+                    contentFrame.size.height = contentFrame.width
+                }
             case .down:
                 contentFrame = .init(x: resizingFrame.origin.x, y: resizingFrame.origin.y + translation.y, width: resizingFrame.width, height: resizingFrame.height - translation.y)
+                if isHoldingShift {
+                    contentFrame.size.width = contentFrame.height
+                }
             case .left:
                 contentFrame = .init(x: resizingFrame.origin.x + translation.x, y: resizingFrame.origin.y, width: resizingFrame.width - translation.x, height: resizingFrame.height)
+                if isHoldingShift {
+                    contentFrame.size.height = contentFrame.width
+                }
             case .move:
+                if isHoldingShift {
+                    if abs(translation.x) < abs(translation.y) {
+                        translation.x = 0
+                    } else {
+                        translation.y = 0
+                    }
+                }
                 contentFrame = resizingFrame.offsetBy(dx: translation.x, dy: translation.y, bounds: superview?.bounds)
+                // Update tracking areas
                 needsDisplay = true
             }
         case .ended:

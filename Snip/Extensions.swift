@@ -49,6 +49,17 @@ extension NSRect {
 
         return newRect
     }
+
+    /// Returns the largest square contained in the rectangle.
+    /// - Returns: The largest square contained in the rectangle.
+    func square() -> Self {
+        // Property `width` and `height` always return standardized value
+        let minLength = min(width, height)
+        // Property `size.width` and `size.height` may be negative
+        let w = size.width < 0 ? -minLength : minLength
+        let h = size.height < 0 ? -minLength : minLength
+        return .init(x: origin.x, y: origin.y, width: w, height: h)
+    }
 }
 
 extension NSImage {

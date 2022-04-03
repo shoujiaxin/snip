@@ -148,7 +148,8 @@ class SnipMaskWindowController: NSWindowController {
             let location = gestureRecognizer.location(in: window?.contentView)
             let translation = gestureRecognizer.translation(in: window?.contentView)
             let startPoint = NSPoint(x: location.x - translation.x, y: location.y - translation.y)
-            resizingBox.contentFrame = NSRect(origin: startPoint, size: .init(width: translation.x, height: translation.y))
+            let rect = NSRect(origin: startPoint, size: .init(width: translation.x, height: translation.y))
+            resizingBox.contentFrame = NSEvent.modifierFlags == .shift ? rect.square() : rect
         case .ended:
             updateToolbar(resizingBox.contentFrame)
         default:
