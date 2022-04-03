@@ -144,17 +144,17 @@ class SnipMaskWindowController: NSWindowController {
         case .began:
             resizingBox.isResizable = true
             toolbar.isHidden = true
-        case .changed:
-            let location = gestureRecognizer.location(in: window?.contentView)
-            let translation = gestureRecognizer.translation(in: window?.contentView)
-            let startPoint = NSPoint(x: location.x - translation.x, y: location.y - translation.y)
-            let rect = NSRect(origin: startPoint, size: .init(width: translation.x, height: translation.y))
-            resizingBox.contentFrame = NSEvent.modifierFlags == .shift ? rect.square() : rect
         case .ended:
             updateToolbar(resizingBox.contentFrame)
         default:
-            return
+            break
         }
+
+        let location = gestureRecognizer.location(in: window?.contentView)
+        let translation = gestureRecognizer.translation(in: window?.contentView)
+        let startPoint = NSPoint(x: location.x - translation.x, y: location.y - translation.y)
+        let rect = NSRect(origin: startPoint, size: .init(width: translation.x, height: translation.y))
+        resizingBox.contentFrame = NSEvent.modifierFlags == .shift ? rect.square() : rect
     }
 
     @objc private func onClickGesture(gestureRecognizer _: NSClickGestureRecognizer) {

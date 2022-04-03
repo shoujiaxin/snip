@@ -84,20 +84,20 @@ class ImageCanvasViewController: NSViewController {
             commit()
             markupView.content = NSHostingView(rootView: MarkupShapeView())
             markupView.contentFrame = .zero
-        case .changed:
-            let location = gestureRecognizer.location(in: view)
-            let translation = gestureRecognizer.translation(in: view)
-            let startPoint = NSPoint(x: location.x - translation.x, y: location.y - translation.y)
-            switch markupState {
-            case .rectangle:
-                let rect = NSRect(origin: startPoint, size: .init(width: translation.x, height: translation.y))
-                markupView.contentFrame = NSEvent.modifierFlags == .shift ? rect.square() : rect
-            default:
-                return
-            }
         case .ended:
             markupView.isResizable = true
             view.window?.makeFirstResponder(markupView)
+        default:
+            break
+        }
+
+        let location = gestureRecognizer.location(in: view)
+        let translation = gestureRecognizer.translation(in: view)
+        let startPoint = NSPoint(x: location.x - translation.x, y: location.y - translation.y)
+        switch markupState {
+        case .rectangle:
+            let rect = NSRect(origin: startPoint, size: .init(width: translation.x, height: translation.y))
+            markupView.contentFrame = NSEvent.modifierFlags == .shift ? rect.square() : rect
         default:
             return
         }
