@@ -236,6 +236,27 @@ class ResizableView: NSView {
             return
         }
     }
+
+    // MARK: - Keyboard events
+
+    override func keyDown(with event: NSEvent) {
+        switch event.keyCode {
+        case 123:
+            // Left arrow
+            contentFrame.origin.x -= 1
+        case 124:
+            // Right arrow
+            contentFrame.origin.x += 1
+        case 125:
+            // Down arrow
+            contentFrame.origin.y -= 1
+        case 126:
+            // Up arrow
+            contentFrame.origin.y += 1
+        default:
+            super.keyDown(with: event)
+        }
+    }
 }
 
 private extension ResizableView {

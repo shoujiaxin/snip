@@ -79,6 +79,7 @@ class SnipMaskWindowController: NSWindowController {
         resizingBox.isResizable = false
         resizingBox.delegate = self
         window?.contentView?.addSubview(resizingBox)
+        window?.makeFirstResponder(resizingBox)
     }
 
     private func setupSizeLabel() {

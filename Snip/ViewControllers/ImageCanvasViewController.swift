@@ -96,6 +96,7 @@ class ImageCanvasViewController: NSViewController {
             }
         case .ended:
             markupView.isResizable = true
+            view.window?.makeFirstResponder(markupView)
         default:
             return
         }
