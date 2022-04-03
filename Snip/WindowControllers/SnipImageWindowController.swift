@@ -83,6 +83,7 @@ class SnipImageWindowController: NSWindowController {
         }
         let imageCanvas = imageCanvasViewController.view
         imageCanvas.shadow = .init()
+        imageCanvas.wantsLayer = true
         imageCanvas.layer?.borderColor = NSColor.controlAccentColor.cgColor.copy(alpha: 0.6)
         imageCanvas.layer?.shadowColor = NSColor.controlAccentColor.cgColor
         imageCanvas.layer?.shadowOpacity = 0.8

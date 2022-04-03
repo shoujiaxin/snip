@@ -161,7 +161,6 @@ class SnipMaskWindowController: NSWindowController {
         }
 
         resizingBox.isResizable = true
-        resizingBox.needsDisplay = true
         updateToolbar(resizingBox.contentFrame)
     }
 

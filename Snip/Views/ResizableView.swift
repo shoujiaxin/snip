@@ -28,7 +28,11 @@ extension ResizableViewDelegate {
 
 class ResizableView: NSView {
     /// Whether the view is resizable.
-    var isResizable: Bool = true
+    var isResizable: Bool = true {
+        didSet {
+            needsDisplay = isResizable != oldValue
+        }
+    }
 
     /// The color of the resizable view's border.
     var borderColor: NSColor = .controlAccentColor
@@ -55,6 +59,7 @@ class ResizableView: NSView {
         }
         set {
             guard let view = newValue else {
+                subviews.forEach { $0.removeFromSuperview() }
                 return
             }
             view.translatesAutoresizingMaskIntoConstraints = false

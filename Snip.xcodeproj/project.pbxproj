@@ -23,6 +23,7 @@
 		2998FBBF275688CE007CBAC0 /* SnipWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2998FBBE275688CE007CBAC0 /* SnipWindow.swift */; };
 		29B5564327F09F7E001CF1F6 /* ImageCanvasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B5564227F09F7E001CF1F6 /* ImageCanvasViewController.swift */; };
 		29D09C0327F210D600DFB708 /* SnipToolbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29D09C0227F210D600DFB708 /* SnipToolbarController.swift */; };
+		29FA458B27F95C330087A17F /* MarkupShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FA458A27F95C330087A17F /* MarkupShapeView.swift */; };
 		29FB8C352763A62000174A11 /* WindowInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FB8C342763A62000174A11 /* WindowInfo.swift */; };
 		6B23BB8C27C3B34200D92A4A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B23BB8B27C3B34200D92A4A /* Constants.swift */; };
 		6B6D374F275A439B009CB9E3 /* ToolbarButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6D374E275A439B009CB9E3 /* ToolbarButtonStyle.swift */; };
@@ -62,6 +63,7 @@
 		2998FBBE275688CE007CBAC0 /* SnipWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipWindow.swift; sourceTree = "<group>"; };
 		29B5564227F09F7E001CF1F6 /* ImageCanvasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCanvasViewController.swift; sourceTree = "<group>"; };
 		29D09C0227F210D600DFB708 /* SnipToolbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipToolbarController.swift; sourceTree = "<group>"; };
+		29FA458A27F95C330087A17F /* MarkupShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkupShapeView.swift; sourceTree = "<group>"; };
 		29FB8C342763A62000174A11 /* WindowInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowInfo.swift; sourceTree = "<group>"; };
 		6B23BB8B27C3B34200D92A4A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		6B6D374E275A439B009CB9E3 /* ToolbarButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButtonStyle.swift; sourceTree = "<group>"; };
@@ -164,12 +166,13 @@
 		2998FBB927566AC0007CBAC0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				6B6D374D275A438D009CB9E3 /* Modifiers */,
 				2998FBBE275688CE007CBAC0 /* SnipWindow.swift */,
 				296B863827C3E639003BD7E0 /* ResizableView.swift */,
 				2998FBBC2756766E007CBAC0 /* SnipSizeLabel.swift */,
 				2903AB8827DBB48E0061887B /* SnipToolbar.swift */,
 				296F527627DE5A0B0093DA08 /* ScaleLabel.swift */,
+				29FA458927F95BF90087A17F /* Markups */,
+				6B6D374D275A438D009CB9E3 /* Modifiers */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -180,6 +183,14 @@
 				29B5564227F09F7E001CF1F6 /* ImageCanvasViewController.swift */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		29FA458927F95BF90087A17F /* Markups */ = {
+			isa = PBXGroup;
+			children = (
+				29FA458A27F95C330087A17F /* MarkupShapeView.swift */,
+			);
+			path = Markups;
 			sourceTree = "<group>";
 		};
 		29FB8C332763A5FB00174A11 /* Models */ = {
@@ -312,6 +323,7 @@
 				295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */,
 				6B6D374F275A439B009CB9E3 /* ToolbarButtonStyle.swift in Sources */,
 				296F527727DE5A0B0093DA08 /* ScaleLabel.swift in Sources */,
+				29FA458B27F95C330087A17F /* MarkupShapeView.swift in Sources */,
 				29B5564327F09F7E001CF1F6 /* ImageCanvasViewController.swift in Sources */,
 				295AE6AD2753758100A0185C /* SnipManager.swift in Sources */,
 				296B863927C3E639003BD7E0 /* ResizableView.swift in Sources */,
