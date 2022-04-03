@@ -34,7 +34,13 @@ struct SnipToolbar: View {
                 Image(systemName: iconName)
             }
             .buttonStyle(ToolbarButtonStyle())
-            .foregroundColor(hoveringItem == item ? .accentColor : .white)
+            .background {
+                if hoveringItem == item {
+                    Color.secondary
+                        .cornerRadius(4)
+                        .opacity(0.5)
+                }
+            }
             .help(name)
             .onHover { isHovering in
                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -52,20 +58,20 @@ struct SnipToolbar: View {
                 Image(systemName: iconName)
             }
             .buttonStyle(ToolbarButtonStyle())
-            .foregroundColor(hoveringItem == item ? .accentColor : .white)
+            .background {
+                if hoveringItem == item {
+                    Color.secondary
+                        .cornerRadius(4)
+                        .opacity(0.5)
+                }
+            }
             .help(name)
             .onHover { isHovering in
                 withAnimation(.easeInOut(duration: 0.2)) {
                     self.hoveringItem = isHovering ? item : nil
                 }
             }
-            .background {
-                if controller.selectedItem == item {
-                    Color.secondary
-                        .cornerRadius(4)
-                        .opacity(0.5)
-                }
-            }
+            .foregroundColor(controller.selectedItem == item ? .accentColor : .white)
         }
     }
 }
