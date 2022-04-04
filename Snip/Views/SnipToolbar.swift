@@ -34,6 +34,7 @@ struct SnipToolbar: View {
                 Image(systemName: iconName)
             }
             .buttonStyle(ToolbarButtonStyle())
+            .foregroundColor(.white)
             .background {
                 if hoveringItem == item {
                     Color.secondary
@@ -58,6 +59,7 @@ struct SnipToolbar: View {
                 Image(systemName: iconName)
             }
             .buttonStyle(ToolbarButtonStyle())
+            .foregroundColor(controller.selectedItem == item ? .accentColor : .white)
             .background {
                 if hoveringItem == item {
                     Color.secondary
@@ -71,7 +73,6 @@ struct SnipToolbar: View {
                     self.hoveringItem = isHovering ? item : nil
                 }
             }
-            .foregroundColor(controller.selectedItem == item ? .accentColor : .white)
         }
     }
 }
