@@ -62,6 +62,7 @@ class ResizableView: NSView {
                 subviews.forEach { $0.removeFromSuperview() }
                 return
             }
+            contentFrame.size = view.frame.size
             view.translatesAutoresizingMaskIntoConstraints = false
             addSubview(view)
             let top = view.topAnchor.constraint(equalTo: topAnchor, constant: borderInset)
@@ -75,7 +76,12 @@ class ResizableView: NSView {
     /// Frame of the content in the parent view's coordinate system.
     var contentFrame: NSRect {
         get {
-            frame.insetBy(dx: borderInset, dy: borderInset)
+            var rect = frame.insetBy(dx: borderInset, dy: borderInset)
+            if frame.origin == .zero {
+                // Otherwise the origin will be inf
+                rect.origin = .zero
+            }
+            return rect
         }
         set {
             var rect = superview?.bounds.intersection(newValue) ?? newValue

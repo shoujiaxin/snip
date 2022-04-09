@@ -83,7 +83,6 @@ class ImageCanvasViewController: NSViewController {
         case .began:
             commit()
             markupView.content = NSHostingView(rootView: MarkupShapeView())
-            markupView.contentFrame = .zero
         case .ended:
             markupView.isResizable = true
             view.window?.makeFirstResponder(markupView)
