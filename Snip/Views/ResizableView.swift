@@ -81,6 +81,7 @@ class ResizableView: NSView {
                 // Otherwise the origin will be inf
                 rect.origin = .zero
             }
+            assert(rect.origin.x.isFinite && rect.origin.y.isFinite && rect.width.isFinite && rect.height.isFinite)
             return rect
         }
         set {
@@ -88,6 +89,7 @@ class ResizableView: NSView {
             rect.size.width = max(rect.width, 1.0)
             rect.size.height = max(rect.height, 1.0)
             frame = rect.integral.insetBy(dx: -borderInset, dy: -borderInset)
+            assert(frame.origin.x.isFinite && frame.origin.y.isFinite && frame.width.isFinite && frame.height.isFinite)
         }
     }
 

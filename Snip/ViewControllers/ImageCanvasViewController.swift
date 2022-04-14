@@ -82,6 +82,7 @@ class ImageCanvasViewController: NSViewController {
         switch gestureRecognizer.state {
         case .began:
             commit()
+            markupView.contentFrame = .zero
             markupView.content = NSHostingView(rootView: MarkupShapeView())
         case .ended:
             markupView.isResizable = true
@@ -112,6 +113,7 @@ class ImageCanvasViewController: NSViewController {
         }
         markupView.isResizable = false
 
+        // FIXME: Draw on original image
         let image = NSImage(size: view.bounds.size)
         image.lockFocus()
         NSGraphicsContext.current.map { view.layer?.render(in: $0.cgContext) }
