@@ -17,8 +17,6 @@ class SnipImageWindowController: NSWindowController {
 
     private var toolbarWindowController: MarkupToolbarWindowController!
 
-    private var toolbarController: SnipToolbarController!
-
     // MARK: - States
 
     /// Original size of the image.
@@ -59,8 +57,6 @@ class SnipImageWindowController: NSWindowController {
         setupScaleLabel()
         setupToolbar()
         setupGestureRecognizers()
-
-        hideToolbar()
     }
 
     @available(*, unavailable)
@@ -119,33 +115,8 @@ class SnipImageWindowController: NSWindowController {
     }
 
     private func setupToolbar() {
-        toolbarController = SnipToolbarController(items: [
-            .tabItem(name: "Shape", iconName: "rectangle") { [weak self] in
-                self?.imageCanvasViewController.markupState = .rectangle
-            } onDeselect: { [weak self] in
-                self?.imageCanvasViewController.markupState = .none
-            },
-            .tabItem(name: "Arrow", iconName: "arrow.up.right") {},
-            .tabItem(name: "Draw", iconName: "scribble") {},
-            .tabItem(name: "Highlight", iconName: "highlighter") {},
-            .tabItem(name: "Mosaic", iconName: "mosaic") {},
-            .tabItem(name: "Text", iconName: "character") {},
-            .divider,
-            .button(name: "Undo", iconName: "arrow.uturn.backward") {},
-            .button(name: "Redo", iconName: "arrow.uturn.forward") {},
-            .divider,
-            .button(name: "Save", iconName: "square.and.arrow.down") { [weak self] in
-                self?.imageCanvasViewController.save()
-            },
-            .button(name: "Copy", iconName: "doc.on.doc") { [weak self] in
-                self?.imageCanvasViewController.copy()
-            },
-            .button(name: "Done", iconName: "checkmark") { [weak self] in
-                self?.toolbarController.selectedItem = nil
-                self?.hideToolbar()
-            },
-        ])
-        toolbarWindowController = .init(controller: toolbarController)
+        toolbarWindowController = .init(imageCanvasViewController: imageCanvasViewController)
+        toolbarWindowController.window?.delegate = self
     }
 
     private func setupGestureRecognizers() {
@@ -193,8 +164,8 @@ class SnipImageWindowController: NSWindowController {
     }
 
     override func cancelOperation(_: Any?) {
-        guard toolbarController.selectedItem == nil else {
-            toolbarController.selectedItem = nil
+        guard toolbarWindowController.selectedItem == nil else {
+            toolbarWindowController.selectedItem = nil
             return
         }
         guard !toolbarWindowController.isVisible else {
@@ -227,7 +198,7 @@ class SnipImageWindowController: NSWindowController {
     }
 
     private func scaled(by scale: CGFloat, at location: NSPoint) {
-        guard toolbarController.selectedItem == nil, let frame = scalingFrame else {
+        guard toolbarWindowController.selectedItem == nil, let frame = scalingFrame else {
             return
         }
 
@@ -246,7 +217,6 @@ class SnipImageWindowController: NSWindowController {
     }
 
     private func hideToolbar() {
-        toolbarWindowController.window.map { window?.removeChildWindow($0) }
         toolbarWindowController.close()
     }
 
@@ -262,10 +232,8 @@ class SnipImageWindowController: NSWindowController {
             return
         }
 
-        let origin = NSPoint(x: frame.maxX - toolbarWindow.frame.width - Self.contentInset,
-                             y: frame.minY - toolbarWindow.frame.height + Self.contentInset / 2)
-        let size = toolbarWindow.frame.size
-        toolbarWindow.setFrame(.init(origin: origin, size: size), display: true)
+        toolbarWindow.setFrameOrigin(.init(x: frame.maxX - toolbarWindow.frame.width - Self.contentInset,
+                                           y: frame.minY - toolbarWindow.frame.height + Self.contentInset / 2))
     }
 }
 
@@ -278,5 +246,11 @@ extension SnipImageWindowController: NSWindowDelegate {
 
     func windowDidResignKey(_: Notification) {
         imageCanvasViewController.view.layer?.shadowColor = NSColor.gray.cgColor
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        if notification.object as? NSWindow == toolbarWindowController.window {
+            toolbarWindowController.window.map { window?.removeChildWindow($0) }
+        }
     }
 }
