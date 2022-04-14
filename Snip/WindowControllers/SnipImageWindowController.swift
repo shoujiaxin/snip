@@ -15,7 +15,7 @@ class SnipImageWindowController: NSWindowController {
 
     private let scaleLabel = NSHostingView(rootView: ScaleLabel(scale: 1.0))
 
-    private let toolbarWindow = NSWindow()
+    private var toolbarWindowController: MarkupToolbarWindowController!
 
     private var toolbarController: SnipToolbarController!
 
@@ -145,13 +145,7 @@ class SnipImageWindowController: NSWindowController {
                 self?.hideToolbar()
             },
         ])
-        let toolbar = NSHostingView(rootView: SnipToolbar(controller: toolbarController))
-        toolbarWindow.animationBehavior = .utilityWindow
-        toolbarWindow.backgroundColor = .clear
-        toolbarWindow.contentView = toolbar
-        toolbarWindow.isOpaque = false
-        toolbarWindow.styleMask = .borderless
-        toolbarWindow.setFrame(.init(origin: .zero, size: toolbar.intrinsicContentSize), display: false)
+        toolbarWindowController = .init(controller: toolbarController)
     }
 
     private func setupGestureRecognizers() {
@@ -190,7 +184,7 @@ class SnipImageWindowController: NSWindowController {
 
     override func keyDown(with event: NSEvent) {
         if event.characters == " " {
-            if toolbarWindow.isVisible {
+            if toolbarWindowController.isVisible {
                 hideToolbar()
             } else {
                 showToolbar()
@@ -203,7 +197,7 @@ class SnipImageWindowController: NSWindowController {
             toolbarController.selectedItem = nil
             return
         }
-        guard !toolbarWindow.isVisible else {
+        guard !toolbarWindowController.isVisible else {
             hideToolbar()
             return
         }
@@ -252,19 +246,19 @@ class SnipImageWindowController: NSWindowController {
     }
 
     private func hideToolbar() {
-        toolbarWindow.setIsVisible(false)
-        window?.removeChildWindow(toolbarWindow)
+        toolbarWindowController.window.map { window?.removeChildWindow($0) }
+        toolbarWindowController.close()
     }
 
     private func showToolbar() {
-        toolbarWindow.setIsVisible(true)
-        window?.addChildWindow(toolbarWindow, ordered: .above)
+        toolbarWindowController.showWindow(self)
+        toolbarWindowController.window.map { window?.addChildWindow($0, ordered: .above) }
 
         updateToolbarFrame()
     }
 
     private func updateToolbarFrame() {
-        guard toolbarWindow.isVisible, let frame = window?.frame else {
+        guard let frame = window?.frame, let toolbarWindow = toolbarWindowController.window else {
             return
         }
 
