@@ -128,6 +128,7 @@ class ResizableView: NSView {
 
     private func setupResizingHandles() {
         let handleSize = 2 * (handleRadius + handleBorderWidth)
+        let inset = borderWidth > handleSize ? (borderWidth - handleSize) / 2 : 0
         let makeHandle: () -> ResizingHandle = {
             let handle = ResizingHandle()
             handle.fillColor = self.handleColor
@@ -145,8 +146,8 @@ class ResizableView: NSView {
         let topLeftHandle = makeHandle()
         topLeftHandle.cursor = .resizeUpLeft
         addConstraints([
-            topLeftHandle.leftAnchor.constraint(equalTo: leftAnchor),
-            topLeftHandle.topAnchor.constraint(equalTo: topAnchor),
+            topLeftHandle.leftAnchor.constraint(equalTo: leftAnchor, constant: inset),
+            topLeftHandle.topAnchor.constraint(equalTo: topAnchor, constant: inset),
             topLeftHandle.widthAnchor.constraint(equalToConstant: handleSize),
             topLeftHandle.heightAnchor.constraint(equalToConstant: handleSize),
         ])
@@ -155,8 +156,8 @@ class ResizableView: NSView {
         let topRightHandle = makeHandle()
         topRightHandle.cursor = .resizeUpRight
         addConstraints([
-            topRightHandle.rightAnchor.constraint(equalTo: rightAnchor),
-            topRightHandle.topAnchor.constraint(equalTo: topAnchor),
+            topRightHandle.rightAnchor.constraint(equalTo: rightAnchor, constant: -inset),
+            topRightHandle.topAnchor.constraint(equalTo: topAnchor, constant: inset),
             topRightHandle.widthAnchor.constraint(equalToConstant: handleSize),
             topRightHandle.heightAnchor.constraint(equalToConstant: handleSize),
         ])
@@ -165,8 +166,8 @@ class ResizableView: NSView {
         let bottomRightHandle = makeHandle()
         bottomRightHandle.cursor = .resizeDownRight
         addConstraints([
-            bottomRightHandle.rightAnchor.constraint(equalTo: rightAnchor),
-            bottomRightHandle.bottomAnchor.constraint(equalTo: bottomAnchor),
+            bottomRightHandle.rightAnchor.constraint(equalTo: rightAnchor, constant: -inset),
+            bottomRightHandle.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset),
             bottomRightHandle.widthAnchor.constraint(equalToConstant: handleSize),
             bottomRightHandle.heightAnchor.constraint(equalToConstant: handleSize),
         ])
@@ -175,8 +176,8 @@ class ResizableView: NSView {
         let bottomLeftHandle = makeHandle()
         bottomLeftHandle.cursor = .resizeDownLeft
         addConstraints([
-            bottomLeftHandle.leftAnchor.constraint(equalTo: leftAnchor),
-            bottomLeftHandle.bottomAnchor.constraint(equalTo: bottomAnchor),
+            bottomLeftHandle.leftAnchor.constraint(equalTo: leftAnchor, constant: inset),
+            bottomLeftHandle.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset),
             bottomLeftHandle.widthAnchor.constraint(equalToConstant: handleSize),
             bottomLeftHandle.heightAnchor.constraint(equalToConstant: handleSize),
         ])
@@ -191,7 +192,7 @@ class ResizableView: NSView {
         addConstraints([
             topHandleLeftConstraint,
             topHandleRightConstraint,
-            topHandle.topAnchor.constraint(equalTo: topAnchor),
+            topHandle.topAnchor.constraint(equalTo: topAnchor, constant: inset),
             topHandle.heightAnchor.constraint(equalToConstant: handleSize),
         ])
 
@@ -203,7 +204,7 @@ class ResizableView: NSView {
         let rightHandleBottomConstraint = rightHandle.bottomAnchor.constraint(equalTo: bottomRightHandle.topAnchor)
         rightHandleBottomConstraint.priority = .defaultLow
         addConstraints([
-            rightHandle.rightAnchor.constraint(equalTo: rightAnchor),
+            rightHandle.rightAnchor.constraint(equalTo: rightAnchor, constant: -inset),
             rightHandleTopConstraint,
             rightHandleBottomConstraint,
             rightHandle.widthAnchor.constraint(equalToConstant: handleSize),
@@ -219,7 +220,7 @@ class ResizableView: NSView {
         addConstraints([
             bottomHandleLeftConstraint,
             bottomHandleRightConstraint,
-            bottomHandle.bottomAnchor.constraint(equalTo: bottomAnchor),
+            bottomHandle.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset),
             bottomHandle.heightAnchor.constraint(equalToConstant: handleSize),
         ])
 
@@ -231,7 +232,7 @@ class ResizableView: NSView {
         let leftHandleBottomConstraint = leftHandle.bottomAnchor.constraint(equalTo: bottomLeftHandle.topAnchor)
         leftHandleBottomConstraint.priority = .defaultLow
         addConstraints([
-            leftHandle.leftAnchor.constraint(equalTo: leftAnchor),
+            leftHandle.leftAnchor.constraint(equalTo: leftAnchor, constant: inset),
             leftHandleTopConstraint,
             leftHandleBottomConstraint,
             leftHandle.widthAnchor.constraint(equalToConstant: handleSize),
