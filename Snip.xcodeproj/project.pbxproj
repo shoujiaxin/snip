@@ -15,6 +15,7 @@
 		295AE69327526FD600A0185C /* SnipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE69227526FD600A0185C /* SnipTests.swift */; };
 		295AE6AD2753758100A0185C /* SnipManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6AC2753758100A0185C /* SnipManager.swift */; };
 		295AE6B52753C41800A0185C /* SnipMaskWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295AE6B42753C41800A0185C /* SnipMaskWindowController.swift */; };
+		295ECC7228199DF500D2597D /* ResizableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295ECC7128199DF500D2597D /* ResizableViewDelegate.swift */; };
 		296B863927C3E639003BD7E0 /* ResizableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296B863827C3E639003BD7E0 /* ResizableView.swift */; };
 		296E01B827D8E59E00F0F09B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 296E01B727D8E59E00F0F09B /* Preview Assets.xcassets */; };
 		296F527727DE5A0B0093DA08 /* ScaleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296F527627DE5A0B0093DA08 /* ScaleLabel.swift */; };
@@ -56,6 +57,7 @@
 		295AE6AB275271E200A0185C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		295AE6AC2753758100A0185C /* SnipManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipManager.swift; sourceTree = "<group>"; };
 		295AE6B42753C41800A0185C /* SnipMaskWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipMaskWindowController.swift; sourceTree = "<group>"; };
+		295ECC7128199DF500D2597D /* ResizableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizableViewDelegate.swift; sourceTree = "<group>"; };
 		296B863827C3E639003BD7E0 /* ResizableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizableView.swift; sourceTree = "<group>"; };
 		296E01B727D8E59E00F0F09B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		296F527627DE5A0B0093DA08 /* ScaleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleLabel.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				6B23BB8B27C3B34200D92A4A /* Constants.swift */,
 				6BE58E1E2757775F0073CBAE /* Extensions.swift */,
 				295AE6AC2753758100A0185C /* SnipManager.swift */,
+				295ECC7028199DE800D2597D /* Protocols */,
 				29FB8C332763A5FB00174A11 /* Models */,
 				2998FBB927566AC0007CBAC0 /* Views */,
 				2998FBB827566AB1007CBAC0 /* WindowControllers */,
@@ -138,6 +141,14 @@
 				295AE69227526FD600A0185C /* SnipTests.swift */,
 			);
 			path = SnipTests;
+			sourceTree = "<group>";
+		};
+		295ECC7028199DE800D2597D /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				295ECC7128199DF500D2597D /* ResizableViewDelegate.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		296E01B627D8E58C00F0F09B /* Preview Content */ = {
@@ -325,6 +336,7 @@
 				2903AB8927DBB48E0061887B /* SnipToolbar.swift in Sources */,
 				295AE68327526FD500A0185C /* Snip.xcdatamodeld in Sources */,
 				6B6D374F275A439B009CB9E3 /* ToolbarButtonStyle.swift in Sources */,
+				295ECC7228199DF500D2597D /* ResizableViewDelegate.swift in Sources */,
 				296F527727DE5A0B0093DA08 /* ScaleLabel.swift in Sources */,
 				29FA458B27F95C330087A17F /* MarkupShapeView.swift in Sources */,
 				29B5564327F09F7E001CF1F6 /* ImageCanvasViewController.swift in Sources */,
